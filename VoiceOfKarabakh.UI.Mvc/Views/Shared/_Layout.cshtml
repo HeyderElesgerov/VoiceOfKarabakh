@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VoiceOfKarabakh.UI.Mvc</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comfortaa:wght@300;400;500;600;700&family=Raleway:wght@400;600&family=Patua+One&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <script rel="preload" src="https://kit.fontawesome.com/3c8d729e68.js" crossorigin="anonymous" as="script"></script>
+
+    <link rel="stylesheet" href="/Header only/styles/header.css">
+    <link rel="stylesheet" href="/Footer only/styles/footer.css">
+
+</head>
+<body>
+    @await Html.PartialAsync("_Header")
+
+    @RenderBody()
+
+    @await Html.PartialAsync("_Footer")
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

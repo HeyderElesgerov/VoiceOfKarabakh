@@ -1,0 +1,436 @@
+﻿@model List<System.Globalization.CultureInfo>;
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "_AdminLayout";
+}
+
+<link href="~/Dynamic-Autocomplete-Tag-Input-Plugin-For-jQuery-Tokenize2/tokenize2.css" rel="stylesheet" />
+<link href="~/ImageUploaderWithPreview/index.css" rel="stylesheet" />
+<link href="~/richtexteditor/rte_theme_default.css" rel="stylesheet" />
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+@foreach (var culture in Model)
+{
+    <input class="culture" value="@culture.TwoLetterISOLanguageName" hidden />
+}
+
+<input id="postId" value="@ViewData["id"].ToString()" hidden />
+
+<input id="titleSetId" hidden/>
+<input id="metaTitleSetId" hidden/>
+<input id="contentSetId" hidden/>
+
+<div class="loader" id="loader" style="display: block;"></div>
+
+<form method="post" enctype="multipart/form-data" id="editForm">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="text-center">
+            <h4>@Model[i].DisplayName</h4>
+        </div>
+
+        <div class="form-group">
+            <label>Title</label>
+            <input class="form-control" id="@Model[i].TwoLetterISOLanguageName-title" placeholder="Enter title" />
+
+        </div>
+        <div class="form-group">
+            <label>Meta Title</label>
+            <input class="form-control" id="@Model[i].TwoLetterISOLanguageName-metaTitle" placeholder="Enter meta title" />
+        </div>
+        <div class="form-group">
+            <label>Content</label>
+            <input id="@Model[i].TwoLetterISOLanguageName-content" hidden />
+            <div id="@Model[i].TwoLetterISOLanguageName-editor" class="richtexteditor" style="width: 100%;">
+            </div>
+        </div>
+        <br />
+    }
+
+    <div class="form-group">
+        <label><b>Reading time</b></label>
+        <input class="form-control" id="readingTime" type="number" />
+    </div>
+
+    <div class="form-group">
+        <h3 class='title'>TAGS</h3>
+        <select id="tagsContainer" class="tags" multiple>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <h3 class='title'>CATEGORIES </h3>
+        <select id="categoriesContainer" class="categories" multiple>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label><b>Current Photo</b></label>
+        <img id="existingImagePreview" width="300" height="150">
+    </div>
+
+    <div class="image-input form-group">
+        <input id="existingImageId" hidden />
+        <input id="existingImage" hidden />
+
+        <input type="file" accept="image/*" id="imageInput" name="HeaderPhoto">
+        <label for="imageInput" class="image-button"> Change image</label>
+
+        <img src="" class="image-preview">
+        <span class="change-image">Choose different image</span>
+    </div>
+    <div class="btn-group-lg">
+        <input class="btn btn-info" type="button" onclick="saveAsDraft()" value="Save as Draft" />
+        <input class="btn btn-success" type="button" onclick="publish()" value="Publish" />
+    </div>
+</form>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/Dynamic-Autocomplete-Tag-Input-Plugin-For-jQuery-Tokenize2/tokenize2.js"></script>
+<script src="~/ImageUploaderWithPreview/index.js"></script>
+<script src="~/richtexteditor/rte.js"></script>
+<script src="~/richtexteditor/plugins/all_plugins.js"></script>
+
+<script>
+    let tagsContainer = document.getElementById('tagsContainer');
+    let categoriesContainer = document.getElementById('categoriesContainer');
+    let tagsSelectList = $('.tags');
+    let categoriesSelectList = $('.categories');
+
+    let cultures = [];
+    let id = document.getElementById('postId').value;
+    let form = document.getElementById('editForm');
+    let loader = document.getElementById('loader');
+
+    getPost();
+
+    for (let cultureField of document.getElementsByClassName('culture')) {
+        cultures.push(cultureField.value);
+    }
+
+    function getPost() {
+        showLoading();
+
+        fetch('/api/CulturalHeritageposts/' + id, {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(result => {
+                if (result.status) {
+                    if (result.status == 404 || result.status == 500) {
+                        alert('Not found!');
+                        window.location.href = window.location.origin + '/CulturalHeritage/AdminIndex';
+                    }
+                }
+                console.log(result)
+                fetch('/api/tags', {
+                    method: 'GET'
+                })
+                    .then(resp => resp.json())
+                    .then(val => {
+                        initSelectedTags(val, result.selectedTagIds)
+                        tagsSelectList.tokenize2({
+                            searchMinLength: 0,
+                            searchMaxLength: 0
+                        });
+                    });
+
+                fetch('/api/categories', {
+                    method: 'GET'
+                })
+                    .then(resp => resp.json())
+                    .then(val => {
+                        initSelectedCategories(val, result.selectedCategoryIds)
+                        categoriesSelectList.tokenize2({
+                            searchMinLength: 0,
+                            searchMaxLength: 0
+                        });
+                    });
+
+                initSetIds(
+                    result.titleLocalizations[0], result.metaTitleLocalizations[0], result.contentLocalizations[0])
+
+                initTitles(result.titleLocalizations)
+                initMetaTitles(result.metaTitleLocalizations)
+                initContents(result.contentLocalizations);
+                initReadingTime(result.readingTime);
+                initPhoto(result.currentPhotoPath, result.currentSaveFileId);
+                initEditors();
+
+                hideLoading();
+            })
+    }
+
+    function initSetIds(titleLocSet, metaTitleLocSet, contentLocSet) {
+        document.getElementById('titleSetId').value = titleLocSet.localizationSetId;
+        document.getElementById('metaTitleSetId').value = metaTitleLocSet.localizationSetId;
+        document.getElementById('contentSetId').value = contentLocSet.localizationSetId;
+    }
+
+    function initTitles(titles) {
+        for (let i = 0; i < titles.length; i++) {
+            let title = titles[i];
+            document.getElementById(title.cultureCode + '-title').value = title.value;
+        }
+    }
+
+    function initMetaTitles(metaTitles) {
+        for (let i = 0; i < metaTitles.length; i++) {
+            let metaTitle = metaTitles[i];
+            document.getElementById(metaTitle.cultureCode + '-metaTitle').value = metaTitle.value;
+        }
+    }
+
+    function initContents(contents) {
+        for (let i = 0; i < contents.length; i++) {
+            let content = contents[i];
+            document.getElementById(content.cultureCode + '-content').value = content.value;
+        }
+    }
+
+    function initReadingTime(readingTime) {
+        document.getElementById('readingTime').value = readingTime;
+    }
+
+    function initPhoto(path, id) {
+        document.getElementById('existingImage').value = path;
+        document.getElementById('existingImageId').value = id;
+        document.getElementById('existingImagePreview').src = "/Photos/" + path;
+    }
+
+    function initSelectedTags(tags, selectedTagIds) {
+        for (let i = 0; i < tags.length; i++) {
+            let tag = tags[i];
+            let tagValue = tag.localizationViewModels[0].value;
+            let tagId = tag.tagId;
+
+            var option = document.createElement("option");
+            option.text = tagValue;
+            option.value = tagId;
+            let tagSelected = false;
+
+            if (selectedTagIds && selectedTagIds.length > 0) {
+                for (let selectedTagId of selectedTagIds) {
+                    if (tagId == selectedTagId) {
+                        tagSelected = true;
+                        break;
+                    }
+                }
+            }
+
+
+            option.selected = tagSelected;
+            tagsContainer.add(option);
+        }
+    }
+
+    function initSelectedCategories(categories, selectedCategoryIds) {
+        for (let i = 0; i < categories.length; i++) {
+            let category = categories[i];
+            let categoryValue = category.localizationViewModels[0].value;
+            let categoryId = category.categoryId;
+
+            var option = document.createElement("option");
+            option.text = categoryValue;
+            option.value = categoryId;
+
+            let categorySelected = false;
+            if (selectedCategoryIds && selectedCategoryIds.length > 0) {
+                for (let selectedCatId of selectedCategoryIds) {
+                    if (categoryId == selectedCatId) {
+                        categorySelected = true;
+                        break;
+                    }
+                }
+            }
+
+
+            option.selected = categorySelected;
+            categoriesContainer.add(option);
+        }
+    }
+
+    function initEditors() {
+        let editors = [];
+
+        for (let culture of cultures) {
+            var editor = new RichTextEditor(document.getElementById(culture + "-editor"));
+            editors.push(editor);
+        }
+
+        for (let i = 0; i < cultures.length; i++) {
+            let editor = editors[i];
+            let culture = cultures[i];
+
+            editor.setHTMLCode(document.getElementById(culture + "-content").value);
+            editor.attachEvent("change", function () {
+                console.log(editor.getHTMLCode());
+                document.getElementById(culture + '-content').value = editor.getHTMLCode();
+            });
+        }
+    }
+
+    function getTagIds() {
+        let tagIds = [];
+        let selectedOptions = tagsContainer.options;
+
+        for (let opt of selectedOptions) {
+            if (opt.selected) {
+                tagIds.push(parseInt(opt.value));
+            }
+        }
+        if (tagIds.length == 0)
+            tagIds = null;
+
+        return tagIds;
+    }
+
+    function getCategoryIds() {
+        let categoryIds = [];
+        let selectedOptions = categoriesContainer.options;
+
+        for (let opt of selectedOptions) {
+            if (opt.selected) {
+                categoryIds.push(parseInt(opt.value));
+            }
+        }
+
+        if (categoryIds.length == 0)
+            categoryIds = null;
+
+        return categoryIds;
+    }
+
+    function getFormData() {
+        var formData = new FormData();
+        formData.append("ReadingTime", parseInt(document.getElementById('readingTime').value))
+        formData.append("CurrentPhotoPath", document.getElementById('existingImage').value)
+        formData.append("CurrentSaveFileId", document.getElementById('existingImageId').value)
+        formData.append("PostId", id)
+
+        let categoryIds = getCategoryIds();
+        let tagIds = getTagIds();
+        if (categoryIds) {
+            for (let i = 0; i < categoryIds.length; i++) {
+                formData.append(`SelectedCategoryIds[${i}]`, categoryIds[i])
+            }
+        }
+
+        if (tagIds) {
+            for (let i = 0; i < tagIds.length; i++) {
+                formData.append(`SelectedTagIds[${i}]`, tagIds[i])
+            }
+        }
+
+        let imageInput = document.getElementById('imageInput');
+
+        if (imageInput.files && imageInput.files.length > 0) {
+            formData.append("NewHeaderPhoto", imageInput.files[0]);
+        }
+        else {
+            formData.append("NewHeaderPhoto", null);
+        }
+
+
+        for (let i = 0; i < cultures.length; i++) {
+            formData.append(`TitleLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`TitleLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-title`).value)
+            formData.append(`TitleLocalizations[${i}].LocalizationSetId`, document.getElementById(`titleSetId`).value)
+
+            formData.append(`MetaTitleLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`MetaTitleLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-metaTitle`).value)
+            formData.append(`MetaTitleLocalizations[${i}].LocalizationSetId`, document.getElementById(`metaTitleSetId`).value);
+
+            formData.append(`ContentLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`ContentLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-content`).value)
+            formData.append(`ContentLocalizations[${i}].LocalizationSetId`, document.getElementById(`contentSetId`).value)
+        }
+
+        return formData;
+    }
+
+    function publish() {
+        var formData = getFormData();
+        formData.append("Drafted", false);
+        let msg = 'Published succesfully!';
+        send(formData, msg);
+    }
+
+    function saveAsDraft() {
+        var formData = getFormData();
+        formData.append("Drafted", true);
+        let msg = 'Drafted succesfully!';
+        send(formData, msg);
+    }
+
+    function send(formData, msg) {
+        showLoading();
+
+        fetch('/api/CulturalHeritageposts', {
+            method: 'PUT',
+            headers: {
+                'Accept-Encoding': 'multipart/form-data'
+            },
+            body: formData
+        })
+            .then(resp => {
+                if (resp.status) {
+                    if (resp.status == 204) {//updated succesfully
+                        hideLoading();
+                        alert(msg);
+                        window.location.href = window.location.origin + '/CulturalHeritage/AdminIndex';
+                    }
+                }
+
+                return resp.json();
+            })
+            .then(result => {
+                if (result.errors) {
+                    hideLoading();
+                    handleErrors(result.errors);
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    function handleErrors(errors) {
+        console.log(errors);
+        if (errors.ReadingTime) {
+            alert('Reading Time is required!')
+        }
+    }
+
+    function showLoading() {
+        loader.style.display = 'block';
+        form.style.opacity = '5%';
+    }
+
+    function hideLoading() {
+        loader.style.display = 'none';
+        form.style.opacity = '100%';
+    }
+</script>

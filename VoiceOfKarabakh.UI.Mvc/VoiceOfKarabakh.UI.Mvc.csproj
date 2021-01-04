@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-VoiceOfKarabakh.UI.Mvc-EA38B96A-40EE-43C1-8058-5E2248CD8AEC</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\ShoppingMall-master\.idea\codeStyleSettings.xml" />
+    <Content Include="wwwroot\ShoppingMall-master\.idea\encodings.xml" />
+    <Content Include="wwwroot\ShoppingMall-master\.idea\misc.xml" />
+    <Content Include="wwwroot\ShoppingMall-master\.idea\modules.xml" />
+    <Content Include="wwwroot\ShoppingMall-master\.idea\scopes\scope_settings.xml" />
+    <Content Include="wwwroot\ShoppingMall-master\.idea\vcs.xml" />
+    <Content Include="wwwroot\ShoppingMall-master\.idea\workspace.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoiceOfKarabakh.Infrastructure\VoiceOfKarabakh.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="wwwroot\Multiple-Image-Picker-jQuery-Spartan\dist\js\" />
+    <Folder Include="wwwroot\Multiple-Image-Picker-jQuery-Spartan\src\js\" />
+    <Folder Include="wwwroot\Photos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\ShoppingMall-master\.idea\.name" />
+    <None Include="wwwroot\ShoppingMall-master\.idea\backbone-shopping-cart-master.iml" />
+  </ItemGroup>
+
+</Project>

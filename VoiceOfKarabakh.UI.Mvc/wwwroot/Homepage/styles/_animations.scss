@@ -1,0 +1,18 @@
+@keyframes from-the-right {
+  from {
+    left: 100%;
+  }
+  to {
+    left: 0;
+  }
+}
+
+@keyframes to-the-left {
+  from {
+    left: 0;
+  }
+
+  to {
+    left: -100%;
+  }
+}

@@ -1,0 +1,314 @@
+﻿@model IEnumerable<System.Globalization.CultureInfo>;
+
+@{
+    ViewData["Title"] = "Tags";
+    Layout = "_AdminLayout";
+}
+
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="categories">
+    <div class="row">
+        <div class="col-md-3">
+            <h4>ADD TAG</h4>
+            <form id="addUser" action="">
+                @foreach (var culture in Model)
+                {
+                    <div class="form-group">
+                        <input class="culture" value="@culture.TwoLetterISOLanguageName" hidden />
+                        <input class="form-control" type="text" name="@culture.TwoLetterISOLanguageName" placeholder="@culture.DisplayName">
+                    </div>
+                }
+                <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+            </form>
+        </div>
+        <div class="col-md-9">
+            <h4>TAGS</h4>
+            <div class="loader" id="loader"></div>
+            <table id="userTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        @foreach (var culture in Model)
+                        {
+                            <th>@culture.DisplayName</th>
+                        }
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Update Tag</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    var tags = [];
+    var cultures = [];
+
+    for (let cultureInput of document.getElementsByClassName('culture')) {
+        cultures.push(cultureInput.value);
+    }
+    initItems();
+
+    $("form").submit(function (e) {
+        e.preventDefault();
+    });
+
+    $("form#addUser").submit(function () {
+        var newTag = {
+            "tagTitleTranslations": []
+        };
+
+        for (let culture of cultures) {
+            let cultureValue = $(`input[name="${culture}"]`).val().trim();
+            newTag.tagTitleTranslations.push({
+                "cultureCode": culture,
+                "value": cultureValue
+            });
+        }
+
+        fetch('/api/tags', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(newTag)
+        })
+            .then(response => response)
+            .then(data => {
+                alert('Added');
+                initItems();
+            })
+            .catch(err => console.log(err));
+    });
+
+    function addUser(user) {
+        users.push(user);
+        appendToUsrTable(user);
+    }
+
+    function editUser(id) {
+        tags.forEach(function (tag, i) {
+            if (tag.tagId == id) {
+                let form = `<form id="updateUser">`;
+
+                for (let culture of cultures) {
+                    let value = "";
+
+                    for (let i = 0; i < tag.localizationViewModels.length; i++) {
+                        let translation = tag.localizationViewModels[i];
+                        if (translation.cultureCode == culture) {
+                            value = translation.value;
+                            break;
+                        }
+                    }
+                    form += `
+                        <label>${culture}</label>
+                        <input class="form-control" type="text" name="${culture}" value="${value}"/>
+                    `;
+                }
+
+                $(".modal-body").empty().append(form);
+                $(".modal-footer").empty().append(`
+                    <button type="button" type="submit" class="btn btn-primary" onClick="updateUser(${id})">Save changes</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </form>`);
+
+            }
+        });
+    }
+
+    function deleteUser(id) {
+        var action = confirm("Are you sure you want to delete this tag?");
+        var msg = "Tag deleted successfully!";
+        tags.forEach(function (tag, i) {
+            if (tag.tagId == id && action != false) {
+
+                fetch('/api/tags/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(id)
+                })
+                    .then(response => response)
+                    .then(data => {
+                        tags.splice(i, 1);
+                        $("#userTable #user-" + id).remove();
+                    })
+                    .catch(err => console.log(err));
+            }
+        });
+    }
+
+    function updateUser(id) {
+        var msg = "User updated successfully!";
+
+        tags.forEach(function (tag, i) {
+            if (tag.tagId == id) {
+                $("#updateUser").children("input").each(function () {
+                    var value = $(this).val();
+                    var attr = $(this).attr("name");
+
+                    let translationExists = false;
+
+                    for (let i = 0; i < tag.localizationViewModels.length; i++) {
+                        let translation = tag.localizationViewModels[i];
+                        if (translation.cultureCode == attr) {
+                            translation.value = value;
+                            translationExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!translationExists) {
+                        tag.localizationViewModels.push({
+                            'localizationSetId': tag.localizationViewModels[0].localizationSetId,
+                            'cultureCode': attr,
+                            'value' : value
+                        });
+                    }
+                });
+
+                let editedTag = {
+                    "tagId": id,
+                    "tagTitleTranslations": tag.localizationViewModels
+                };
+
+                fetch('/api/tags', {
+                    method: "PUT",
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(editedTag)
+                })
+                    .then(response => response)
+                    .then(data => {
+                        tags.splice(i, 1);
+                        tags.splice(tag.tagId - 1, 0, tag);
+
+                        $("#userTable #user-" + tag.tagId).children(".userData").each(function () {
+                            var attr = $(this).attr("name");
+
+                            for (let i = 0; i < tag.localizationViewModels.length; i++) {
+                                let translation = tag.localizationViewModels[i];
+                                if (translation.cultureCode == attr) {
+                                    $(this).text(translation.value);
+                                    break;
+                                }
+                            }
+                        });
+
+                        $(".modal").modal("toggle");
+                        //flashMessage(msg);
+                    })
+                    .catch(err => alert('Unable to update'));
+            }
+        });
+    }
+
+    function flashMessage(msg) {
+        $(".flashMsg").remove();
+        $(".row").prepend(`
+        <div class="col-sm-12"><div class="flashMsg alert alert-success alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button> <strong>${msg}</strong></div></div>
+    `);
+    }
+
+    function appendToUsrTable(tag) {
+        var newRow = `
+        <tr id="user-${tag.tagId}">`
+
+        cultures.forEach(culture => {
+            let translationExists = false;
+            let currentTranslation = undefined;
+
+            for (let i = 0; i < tag.localizationViewModels.length; i++) {
+                let translation = tag.localizationViewModels[i];
+                if (translation.cultureCode == culture) {
+                    translationExists = true;
+                    currentTranslation = translation;
+                    break;
+                }
+            }
+
+            if (translationExists) {
+                newRow += `<td class="userData" name="${culture}">${currentTranslation.value}</td>`;
+            }
+            else {
+                newRow += `<td class="userData" name="${culture}"></td>`;
+            }
+        });
+
+        newRow += `
+                    <td align="center">
+                        <button class="btn btn-warning" onClick="editUser(${tag.tagId})" data-toggle="modal" data-target="#myModal") ">EDIT</button>
+                    </td >
+                    <td align="center">
+                        <button class="btn btn-danger" onClick="deleteUser(${tag.tagId})">DELETE</button>
+                    </td>
+                </tr >`;
+        $("#userTable > tbody").prepend(newRow);
+    }
+
+    function initItems() {
+        document.getElementById('userTable').style.opacity = '0%';
+
+        tags = [];
+        $("#userTableBody").empty();
+
+        fetch('/api/tags')
+            .then(response => response.json())
+            .then(data => {
+                for (let tag of data) {
+                    tags.push(tag)
+                    appendToUsrTable(tag);
+                }
+
+                if (document.getElementById('loader')) {
+                    document.getElementById('loader').remove();
+                }
+
+                document.getElementById('userTable').style.opacity = '100%';
+            });
+    }
+</script>

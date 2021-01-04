@@ -1,0 +1,184 @@
+﻿@model List<System.Globalization.CultureInfo>;
+
+@{
+    ViewData["Title"] = "Edit gallery";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="loader" id="loader" style="display: block;"></div>
+
+<form method="post" enctype="multipart/form-data" id="editForm">
+    <input id="galleryId" name="GalleryId" value="@ViewData["id"].ToString()" hidden />
+
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="text-center">
+            <h4>@Model[i].DisplayName</h4>
+            <input name="culture" value="@Model[i].TwoLetterISOLanguageName" hidden />
+        </div>
+
+        <div class="form-group">
+            <label>Title</label>
+            <input name="TitleLocalizations[@i].LocalizationSetId" hidden />
+            <input name="TitleLocalizations[@i].CultureCode" value="@Model[i].TwoLetterISOLanguageName" hidden />
+            <input class="form-control" name="TitleLocalizations[@i].Value" placeholder="Enter title" />
+        </div>
+
+        <br />
+    }
+
+    <div class="form-group">
+        <label>Upload Image<span>(Required field)</span></label>
+        <div class="col-md-8">
+            <div>
+                <div id="picker"></div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <input class="form-control btn-success" type="button" onclick="send()" value="Publish" />
+    </div>
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="/Multiple-Image-Picker-jQuery-Spartan/spartan-multi-image-picker.js"></script>
+
+<script>
+    let cultures = []
+    let id = document.getElementById('galleryId').value;
+    let form = document.getElementById('editForm');
+    let loader = document.getElementById('loader');
+    let picker = $("#picker");
+
+    for (let cultureField of document.getElementsByName('culture')) {
+        cultures.push(cultureField.value);
+    }
+
+    getPost();
+
+    function getPost() {
+        showLoading();
+
+        fetch('/api/galleries/GetEditGalleryViewModel/' + id, {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(result => {
+                if (result.status) {
+                    if (result.status == 404 || result.status == 500) {
+                        alert('Not found!');
+                        window.location.href = window.location.origin + '/Gallery/AdminIndex';
+                    }
+                }
+                console.log(result);
+                //initing set id and values
+                let setId = result.titleTranslations[0].localizationSetId;
+
+                cultures.forEach((culture, i) => {
+                    document.getElementsByName(`TitleLocalizations[${i}].LocalizationSetId`)[0].value = setId;
+
+                    for (let titleTranslation of result.titleTranslations) {
+                        if (titleTranslation.cultureCode == culture) {
+                            document.getElementsByName(`TitleLocalizations[${i}].Value`)[0].value = titleTranslation.value;
+                            break;
+                        }
+                    }
+                })
+
+                let existingPhotos = [];
+                for (let i = 0; i < result.photos.length; i++) {
+                    existingPhotos.push({
+                        "fileName": result.photos[i].path,
+                        "filePath": "/Photos/" + result.photos[i].path,
+                        "order": i
+                    });
+                }
+                picker.spartanMultiImagePicker({
+                    fieldName: 'Photos',
+                    maxCount: 100
+                }, existingPhotos);
+
+                hideLoading();
+            })
+    }
+
+    function publish() {
+        var formData = getFormData();
+        formData.append("Drafted", false);
+        let msg = 'Published succesfully!';
+        send(formData, msg);
+    }
+
+
+    function send() {
+        showLoading();
+
+        fetch('/api/galleries', {
+            method: 'PUT',
+            headers: {
+                'Accept-Encoding': 'multipart/form-data'
+            },
+            body: new FormData(form)
+        })
+            .then(resp => {
+                hideLoading();
+                if (resp.status) {
+                    if (resp.status == 204) {//updated succesfully
+                        alert('Updated successfully');
+                        window.location.href = window.location.origin + '/Gallery/AdminIndex';
+                    }
+                }
+
+                return resp.json();
+            })
+            .then(result => {
+                if (result.errors) {
+                    handleErrors(result.errors);
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    function handleErrors(errors) {
+        console.log(errors);
+        if (errors.Photos) {
+            alert('Photo is required!')
+        }
+    }
+
+    function showLoading() {
+        loader.style.display = 'block';
+        form.style.display = 'none';
+    }
+
+    function hideLoading() {
+        loader.style.display = 'none';
+        form.style.display = 'block';
+    }
+</script>

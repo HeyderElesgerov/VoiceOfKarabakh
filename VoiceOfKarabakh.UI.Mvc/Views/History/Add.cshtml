@@ -1,0 +1,305 @@
+﻿@model List<System.Globalization.CultureInfo>;
+
+@{
+    ViewData["Title"] = "Add History Post";
+    Layout = "_AdminLayout";
+}
+<link href="~/Dynamic-Autocomplete-Tag-Input-Plugin-For-jQuery-Tokenize2/tokenize2.css" rel="stylesheet" />
+<link href="~/ImageUploaderWithPreview/index.css" rel="stylesheet" />
+<link href="~/richtexteditor/rte_theme_default.css" rel="stylesheet" />
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+@foreach (var culture in Model)
+{
+    <input class="culture" value="@culture.TwoLetterISOLanguageName" hidden />
+}
+<div class="loader" id="loader" style="display: block;"></div>
+
+<form method="post" enctype="multipart/form-data" id="addForm">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="text-center">
+            <h4>@Model[i].DisplayName</h4>
+        </div>
+
+        <div class="form-group">
+            <label>Title</label>
+            <input class="form-control" id="@Model[i].TwoLetterISOLanguageName-title" placeholder="Enter title" />
+
+        </div>
+
+        <div class="form-group">
+            <label>Meta Title</label>
+            <input class="form-control" id="@Model[i].TwoLetterISOLanguageName-metaTitle" placeholder="Enter meta title" />
+        </div>
+
+        <div class="form-group">
+            <label>Content</label>
+            <input id="@Model[i].TwoLetterISOLanguageName-content" hidden />
+            <div id="@Model[i].TwoLetterISOLanguageName-editor" class="richtexteditor" style="width: 100%;">
+            </div>
+        </div>
+        <br />
+    }
+
+    <div class="form-group">
+        <label><b>Reading time</b></label><span>(Required field)</span>
+        <input class="form-control" id="readingTime" type="number" />
+    </div>
+    <div class="form-group">
+        <h3 class='title'>TAGS</h3>
+        <select id="tagsContainer" class="tags" multiple>
+        </select>
+    </div>
+    <div class="form-group">
+        <h3 class='title'>CATEGORIES </h3>
+        <select id="categoriesContainer" class="categories" multiple>
+        </select>
+    </div>
+
+    <div class="image-input form-group">
+        <input id="existingImageId" hidden />
+        <input id="existingImage" hidden />
+
+        <input type="file" accept="image/*" id="imageInput" name="HeaderPhoto">
+        <label for="imageInput" class="image-button"> Choose image(Required field)</label>
+
+        <img src="" class="image-preview">
+        <span class="change-image">Choose different image</span>
+    </div>
+    <div class="btn-group-lg">
+        <input class="btn btn-info" type="button" onclick="saveAsDraft()" value="Save as Draft" />
+        <input class="btn btn-success" type="button" onclick="publish()" value="Publish" />
+    </div>
+</form>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/Dynamic-Autocomplete-Tag-Input-Plugin-For-jQuery-Tokenize2/tokenize2.js"></script>
+<script src="~/ImageUploaderWithPreview/index.js"></script>
+<script src="~/richtexteditor/rte.js"></script>
+<script src="~/richtexteditor/plugins/all_plugins.js"></script>
+
+<script>
+    let tagsContainer = document.getElementById('tagsContainer');
+    let categoriesContainer = document.getElementById('categoriesContainer');
+    let tagsSelectList = $('.tags');
+    let categoriesSelectList = $('.categories');
+    let cultures = [];
+
+    let form = document.getElementById('addForm');
+    let loader = document.getElementById('loader');
+
+    for (let cultureField of document.getElementsByClassName('culture')) {
+        cultures.push(cultureField.value);
+    }
+
+    initEditors();
+    hideLoading();
+    $.get('/api/tags', function (tags) {
+        for (let i = 0; i < tags.length; i++) {
+            let tag = tags[i];
+            let tagValue = tag.localizationViewModels[0].value;
+            let tagId = tag.tagId;
+
+            var option = document.createElement("option");
+            option.text = tagValue;
+            option.value = tagId;
+            tagsContainer.add(option);
+        }
+
+        tagsSelectList.tokenize2({
+            searchMinLength: 0,
+            searchMaxLength: 0
+        });
+    });
+
+    $.get('/api/categories', function (categories) {
+        for (let i = 0; i < categories.length; i++) {
+            let category = categories[i];
+            let categoryValue = category.localizationViewModels[0].value;
+            let categoryId = category.categoryId;
+
+            var option = document.createElement("option");
+            option.text = categoryValue;
+            option.value = categoryId;
+
+            categoriesContainer.add(option);
+        }
+
+        categoriesSelectList.tokenize2({
+            searchMinLength: 0,
+            searchMaxLength: 0
+        });
+    });
+
+    function initEditors() {
+        let editors = [];
+
+        for (let culture of cultures) {
+            var editor = new RichTextEditor(document.getElementById(culture + "-editor"));
+            editors.push(editor);
+        }
+
+        for (let i = 0; i < cultures.length; i++) {
+            let editor = editors[i];
+            let culture = cultures[i];
+
+            editor.setHTMLCode(document.getElementById(culture + "-content").value);
+            editor.attachEvent("change", function () {
+                console.log(editor.getHTMLCode());
+                document.getElementById(culture + '-content').value = editor.getHTMLCode();
+            });
+        }
+    }
+
+    function getTagIds() {
+        let tagIds = [];
+        let selectedOptions = document.getElementById('tagsContainer').options;
+
+        for (let opt of selectedOptions) {
+            if (opt.selected) {
+                tagIds.push(parseInt(opt.value));
+            }
+        }
+        if (tagIds.length == 0)
+            tagIds = null;
+
+        return tagIds;
+    }
+
+    function getCategoryIds() {
+        let categoryIds = [];
+        let selectedOptions = document.getElementById('categoriesContainer').options;
+
+        for (let opt of selectedOptions) {
+            if (opt.selected) {
+                categoryIds.push(parseInt(opt.value));
+            }
+        }
+
+        if (categoryIds.length == 0)
+            categoryIds = null;
+
+        return categoryIds;
+    }
+
+    function publish() {
+        var formData = getFormData();
+        formData.append("Drafted", false);
+        send(formData);
+    }
+
+    function saveAsDraft() {
+        var formData = getFormData();
+        formData.append("Drafted", true);
+        send(formData);
+    }
+
+    function getFormData() {
+        var formData = new FormData();
+        formData.append("ReadingTime", parseInt(document.getElementById('readingTime').value))
+
+        let categoryIds = getCategoryIds();
+        let tagIds = getTagIds();
+        if (categoryIds) {
+            for (let i = 0; i < categoryIds.length; i++) {
+                formData.append(`SelectedCategoryIds[${i}]`, categoryIds[i])
+            }
+        }
+
+        if (tagIds) {
+            for (let i = 0; i < tagIds.length; i++) {
+                formData.append(`SelectedTagIds[${i}]`, tagIds[i])
+            }
+        }
+
+        formData.append("Photo", document.getElementById('imageInput').files[0]);
+
+        for (let i = 0; i < cultures.length; i++) {
+            formData.append(`TitleLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`TitleLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-title`).value)
+            formData.append(`MetaTitleLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`MetaTitleLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-metaTitle`).value)
+            formData.append(`ContentLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`ContentLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-content`).value)
+        }
+
+        return formData;
+    }
+
+    function send(formData) {
+        showLoading();
+
+        fetch('/api/historyposts', {
+            method: 'POST',
+            headers: {
+                'Accept-Encoding': 'multipart/form-data'
+            },
+            body: formData
+        })
+            .then(resp => {
+                hideLoading();
+                if (resp.status == 201 || resp.status == 500) {
+                    alert('Succesfully added!');
+                    window.location.href = window.location.origin + '/History/AdminIndex';
+                }
+                return resp.json();
+            })
+            .then(result => {
+                console.log(result);
+                if (result.status) {
+                    if (result.status == 400) {                      
+                        handleErrors(result.errors);
+                    }
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    function handleErrors(errors) {
+        if (errors.Photo) {
+            alert("Photo is required")
+        }
+
+        else if (errors.ReadingTime) {
+            alert("Reading time is required")
+        }
+
+        else {
+            alert('Unable to save. Something went wrong :(');
+        }
+    }
+
+    function showLoading() {
+        loader.style.display = 'block';
+        form.style.opacity = '5%';
+    }
+
+    function hideLoading() {
+        loader.style.display = 'none';
+        form.style.opacity = '100%';
+    }
+</script>

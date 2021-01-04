@@ -1,0 +1,305 @@
+﻿@model IEnumerable<System.Globalization.CultureInfo>;
+
+@{
+    ViewData["Title"] = "Categories";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="categories">
+    <div class="row">
+        <div class="col-md-3">
+            <h4>ADD CATEGORY</h4>
+            <form id="addUser" action="">
+                @foreach (var culture in Model)
+                {
+                    <div class="form-group">
+                        <input class="culture" value="@culture.TwoLetterISOLanguageName" hidden />
+                        <input class="form-control" type="text" name="@culture.TwoLetterISOLanguageName" placeholder="@culture.DisplayName">
+                    </div>
+                }
+                <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+            </form>
+        </div>
+        <div class="col-md-9">
+            <h4>CATEGORIES</h4>
+            <div class="loader" id="loader"></div>
+            <table id="userTable" class="table table-dark">
+                <thead>
+                    <tr>
+                        @foreach (var culture in Model)
+                        {
+                            <th>@culture.DisplayName</th>
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Update Category</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    var categories = [];
+    var cultures = [];
+
+    for (let cultureInput of document.getElementsByClassName('culture')) {
+        cultures.push(cultureInput.value);
+    }
+    initItems();
+
+    $("form").submit(function (e) {
+        e.preventDefault();
+    });
+
+    $("form#addUser").submit(function () {
+        var newCategory = {
+            "categoryTitleTranslations": []
+        };
+
+        for (let culture of cultures) {
+            let cultureValue = $(`input[name="${culture}"]`).val().trim();
+            newCategory.categoryTitleTranslations.push({
+                "cultureCode": culture,
+                "value": cultureValue
+            });
+        }
+
+        fetch('/api/categories', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(newCategory)
+        })
+            .then(response => response)
+            .then(data => {
+                alert('Added');
+                initItems();
+            })
+            .catch(err => console.log(err));
+    });
+
+    function addUser(user) {
+        users.push(user);
+        appendToUsrTable(user);
+    }
+
+    function editUser(id) {
+        categories.forEach(function (category, i) {
+            if (category.categoryId == id) {
+                let form = `<form id="updateUser">`;
+
+                for (let culture of cultures) {
+                    let value = "";
+
+                    for (let i = 0; i < category.localizationViewModels.length; i++) {
+                        let translation = category.localizationViewModels[i];
+                        if (translation.cultureCode == culture) {
+                            value = translation.value;
+                            break;
+                        }
+                    }
+                    form += `
+                        <label>${culture}</label>
+                        <input class="form-control" type="text" name="${culture}" value="${value}"/>
+                    `;
+                }
+
+                $(".modal-body").empty().append(form);
+                $(".modal-footer").empty().append(`
+                    <button type="button" type="submit" class="btn btn-primary" onClick="updateUser(${id})">Save changes</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </form>`);
+
+            }
+        });
+    }
+
+    function deleteUser(id) {
+        var action = confirm("Are you sure you want to delete this category?");
+        var msg = "Category deleted successfully!";
+        categories.forEach(function (category, i) {
+            if (category.categoryId == id && action != false) {
+
+                fetch('/api/categories/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(id)
+                })
+                    .then(response => response)
+                    .then(data => {
+                        categories.splice(i, 1);
+                        $("#userTable #user-" + id).remove();
+                    })
+                    .catch(err => console.log(err));
+            }
+        });
+    }
+
+    function updateUser(id) {
+        var msg = "User updated successfully!";
+
+        categories.forEach(function (category, i) {
+            if (category.categoryId == id) {
+                $("#updateUser").children("input").each(function () {
+                    var value = $(this).val();
+                    var attr = $(this).attr("name");
+
+                    let translationExists = false;
+
+                    for (let i = 0; i < category.localizationViewModels.length; i++) {
+                        let translation = category.localizationViewModels[i];
+                        if (translation.cultureCode == attr) {
+                            translation.value = value;
+                            translationExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!translationExists) {
+                        category.localizationViewModels.push({
+                            'localizationSetId': category.localizationViewModels[0].localizationSetId,
+                            'cultureCode': attr,
+                            'value' : value
+                        });
+                    }
+                });
+
+                let editedCategory = {
+                    "categoryId": id,
+                    "categoryTitleTranslations": category.localizationViewModels
+                };
+
+                fetch('/api/categories', {
+                    method: "PUT",
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(editedCategory)
+                })
+                    .then(response => response)
+                    .then(data => {
+                        categories.splice(i, 1);
+                        categories.splice(category.categoryId - 1, 0, category);
+
+                        $("#userTable #user-" + category.categoryId).children(".userData").each(function () {
+                            var attr = $(this).attr("name");
+
+                            for (let i = 0; i < category.localizationViewModels.length; i++) {
+                                let translation = category.localizationViewModels[i];
+                                if (translation.cultureCode == attr) {
+                                    $(this).text(translation.value);
+                                    break;
+                                }
+                            }
+                        });
+
+                        $(".modal").modal("toggle");
+                        //flashMessage(msg);
+                    })
+                    .catch(err => alert('Unable to update'));
+            }
+        });
+    }
+
+    function flashMessage(msg) {
+        $(".flashMsg").remove();
+        $(".row").prepend(`
+        <div class="col-sm-12"><div class="flashMsg alert alert-success alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button> <strong>${msg}</strong></div></div>
+    `);
+    }
+
+    function appendToUsrTable(category) {
+        var newRow = `
+        <tr id="user-${category.categoryId}">`
+
+        cultures.forEach(culture => {
+            let translationExists = false;
+            let currentTranslation = undefined;
+
+            for (let i = 0; i < category.localizationViewModels.length; i++) {
+                let translation = category.localizationViewModels[i];
+                if (translation.cultureCode == culture) {
+                    translationExists = true;
+                    currentTranslation = translation;
+                    break;
+                }
+            }
+
+            if (translationExists) {
+                newRow += `<td class="userData" name="${culture}">${currentTranslation.value}</td>`;
+            }
+            else {
+                newRow += `<td class="userData" name="${culture}"></td>`;
+            }
+        });
+
+        newRow += `
+                    <td align="center">
+                        <button class="btn btn-warning" onClick="editUser(${category.categoryId})" data-toggle="modal" data-target="#myModal") ">EDIT</button>
+                    </td >
+                    <td align="center">
+                        <button class="btn btn-danger" onClick="deleteUser(${category.categoryId})">DELETE</button>
+                    </td>
+                </tr >`;
+        $("#userTable > tbody").prepend(newRow);
+    }
+
+    function initItems() {
+        document.getElementById('userTable').style.opacity = '0%';
+
+        categories = [];
+        $("#userTableBody").empty();
+
+        fetch('/api/categories')
+            .then(response => response.json())
+            .then(data => {
+                for (let category of data) {
+                    categories.push(category)
+                    appendToUsrTable(category);
+                }
+
+                if (document.getElementById('loader')) {
+                    document.getElementById('loader').remove();
+                }
+
+                document.getElementById('userTable').style.opacity = '100%';
+            });
+    }
+</script>

@@ -1,0 +1,134 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+
+@{
+    ViewData["Title"] = localizer["News"].Value;
+    string cultureCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+}
+
+
+<link rel="stylesheet" href="/Singlepost/styles/spost.css">
+
+<input id="serverData" data-id="@ViewData["id"]" data-culture="@cultureCode" hidden/>
+
+<section class="post-main">
+    <div class="thumb"></div>
+    <div class="meta">
+        <div class="tags">
+        </div>
+
+        <p class="date"></p>
+    </div>
+    <h2></h2>
+    <div class="content">
+    </div>
+</section>
+
+<script>
+    let thumb = document.querySelector('.thumb');
+    let tagsContainer = document.querySelector('.tags');
+    let date = document.querySelector('.date');
+    let title = document.querySelector('h2');
+    let content = document.querySelector('.content');
+    let posId = document.getElementById('serverData').dataset.id;
+    let culture = document.getElementById('serverData').dataset.culture;
+
+    fetch(`/api/Celebrityposts/GetReadPost/${posId}/` + culture)
+        .then(response => response.json())
+        .then(data => {
+            thumb.style.backgroundImage = `url("/Photos/${data.photoFilePath}")`;
+            title.innerText = `${data.title}`;
+            content.innerHTML = data.content;
+
+            for (let i = 0; i < data.categories.length; i++) {
+                var category = data.categories[i];
+                var categoryEl = createCategory(category.categoryId, category.categoryTitle);
+                if (categoryEl) {
+
+                    tagsContainer.appendChild(categoryEl);
+                }
+            }
+
+            for (let i = 0; i < data.tags.length; i++) {
+                let tag = data.tags[i];
+                var tagEl = createTag(tag.tagId, tag.tagTitle);
+
+                if (tagEl) {
+                    tagsContainer.appendChild(tagEl);
+                }
+            }
+
+            date.innerText = `${convertDateFormat(data.created)}` || "";
+        });
+
+
+    function convertDateFormat(date) {
+        let month = date.slice(5, 7);
+        let day = date.slice(8, 10);
+        let monthName = 'Jan';
+        switch (month) {
+            case '01':
+                monthName = 'Jan';
+                break;
+            case '02':
+                monthName = 'Feb';
+                break;
+            case '03':
+                monthName = 'Mar';
+                break;
+            case '04':
+                monthName = 'Apr';
+                break;
+            case '05':
+                monthName = 'May';
+                break;
+            case '06':
+                monthName = 'Jun';
+                break;
+            case '07':
+                monthName = 'Jul';
+                break;
+            case '08':
+                monthName = 'Aug';
+                break;
+            case '09':
+                monthName = 'Sep';
+                break;
+            case '10':
+                monthName = 'Oct';
+                break;
+            case '11':
+                monthName = 'Now';
+                break;
+            case '12':
+                monthName = 'Dec';
+                break;
+        }
+        return monthName + ' ' + day;
+    }
+
+    function createTag(tagId, tagName) {
+        if (tagName) {
+            var a = document.createElement('a');
+            a.innerText = '#' + tagName + '   ';
+            a.href = '/Celebrity/ByTag?tagId=' + tagId;
+
+            a.classList.add('tagname');
+
+            return a;
+        }
+
+    }
+
+    function createCategory(categoryId, categoryName) {
+        if (categoryName) {
+            var a = document.createElement('a');
+            a.innerText = categoryName + '  ';
+            a.href = '/Celebrity/ByCategory?categoryId=' + categoryId;
+
+            a.classList.add('tagname');
+
+            return a;
+        }
+
+    }
+</script>

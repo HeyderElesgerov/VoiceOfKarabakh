@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "News";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<table id="postsTable" class="table table-dark">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Author</th>
+            <th>Title</th>
+            <th>Created</th>
+            <th>Reading Count</th>
+            <th>Reading Time</th>
+            <th>Drafted</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="postsTableBody">
+    </tbody>
+</table>
+
+<div class="loader" id="loader" style="display: block;"></div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
+<script>
+    var table = document.getElementById('postsTable');
+    let tableBody = table.getElementsByTagName('tbody')[0];
+    let loader = document.getElementById('loader');
+    var dataTable = $('#postsTable').DataTable();
+
+    initRows();
+
+    function initRows() {
+        showLoading();
+        fetch('/api/NewsPosts', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 0; i < data.length; i++) {
+                    dataTable.row.add([
+                        data[i].id,
+                        data[i].authorEmail,
+                        data[i].title,
+                        data[i].created,
+                        data[i].readingCount,
+                        data[i].readingTime,
+                        data[i].drafted,
+                        `<a class="btn btn-warning" href="/News/Edit?id=${data[i].id}">Edit</a>`,
+                        `<input class="btn btn-danger" type="button" onclick="deletePost(${data[i].id})" value="Delete" />`
+                    ]).draw(false);
+                }
+
+                hideLoading();
+            })
+            .catch(err => console.error(err));
+    }
+
+    function deletePost(id) {
+        if (confirm('Are you sure?')) {
+            fetch('/api/newsposts/' + id, {
+                method: 'DELETE',
+                body: id
+            })
+                .then(resp => {
+                    console.log(resp);
+                    if (resp.status == 200) {
+                        alert('Deleted');
+                        location.reload();
+                    }
+                    else {
+                        alert('Unable to delete');
+                    }
+                });
+        }
+    }
+
+    function showLoading() {
+        loader.style.display = 'block';
+        tableBody.style.display = 'none';
+    }
+
+    function hideLoading() {
+        loader.style.display = 'none';
+        tableBody.style.display = '';
+    }
+</script>

@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Mixins
+
+@mixin flex-all-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+//Fonts
+
+$bebas: "Bebas Neue", cursive;
+$comfortaa: "Comfortaa", cursive;
+$poppins: "Poppins", sans-serif;
+$patua: "Patua One", cursive;
+$raleway: "Raleway", sans-serif;
+
+//Colors
+
+$d-main: #252320;
+$m-main: #48433d;
+$l-sec: #00c3ff;
+$m-sec: #0195c2;
+$contrast: #ffaa00;
+$l-bg: #e2e2e2;
+$d-bg: #5a5a5a;

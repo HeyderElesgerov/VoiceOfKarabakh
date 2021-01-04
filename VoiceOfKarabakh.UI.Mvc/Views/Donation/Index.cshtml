@@ -1,0 +1,285 @@
+﻿@{
+    ViewData["Title"] = "Donations";
+}
+
+<link href="~/ShoppingMall-master/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/ShoppingMall-master/css/style.css">
+
+<style>
+    .btn:focus, .btn:active {
+        outline: none !important;
+        box-shadow: none;
+    }
+</style>
+
+<input id="sessionId" hidden />
+<input id="cultureCode" value="@Model.TwoLetterISOLanguageName.ToString()" hidden />
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-9  col-md-10  main" id="main">
+            <div class="row">
+                <div id="categoriesContainer" class="center-block">
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <ul id="default-item-list" class="col-md-12">
+                </ul>
+            </div>
+
+            <div class="row">
+                <div id="detail"></div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-3 col-sm-offset-3 col-md-2 col-md-offset-2 sidebar" id="sidebar">
+            <table id="shopping-cart" class="table table-responsive">
+                <tbody id="shopping-list">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" id="total"></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button class="btn btn-primary btn-lg" id="checkout">Check out</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    let sessionId = document.getElementById('sessionId').value;
+    let categoriesContainer = document.getElementById('categoriesContainer');
+
+
+    let cartItemsContainer = document.getElementById('shopping-list');
+    let cartPriceContainer = document.getElementById('total')
+    let donationsContainer = document.getElementById('default-item-list')
+
+
+    let currentCultureCode = document.getElementById('cultureCode').value;
+    let donations = [];
+
+    initDonationCategories();
+    initCart();
+
+    function initDonationCategories() {
+        categoriesContainer.innerHTML = '';
+
+        fetch('/api/donationcategories/' + currentCultureCode, {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(categories => {
+                for (let category of categories) {
+                    categoriesContainer.innerHTML += `
+                        <input type="button" id="category${category.id}" class="btn btn-info" value="${category.title}" onclick="initDonations(${category.id})"/>
+                    `;
+                }
+
+                initDonations(categories[0].id);
+            })
+    }
+
+    function initDonations(categoryId) {
+        toggleCategoryBtnActiveStatus(categoryId);
+        donations = [];
+
+        fetch('/api/donations/GetDonationsViewModelByDonationCategory/' + categoryId + '/' + currentCultureCode, {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(dons => {
+                donations = dons;
+                initDonationsUi(dons)
+            })
+    }
+
+    function initDonationsUi(donations) {
+        donationsContainer.innerHTML = '';
+
+        for (let donation of donations) {
+            let id = donation.id;
+            let title = donation.title;
+            let metaTitle = donation.metaTitle;
+            let photoName = donation.photoName;
+
+            let li = `
+                    <li class="col-md-4">
+                        <div class="shoppingListItemContent">
+                            <a href="/Donation/Read?id=${id}" data-toggle="lightbox">
+                                <img src="/Photos/${photoName}" class="img-responsive">
+                            </a>
+                            <div class="infos">
+                                <h4 class="name text-info">${title}</h4>
+                                <p>${metaTitle}</p>
+
+                                <input type="number" id="donation${id}" min="1" onkeypress="return event.charCode >= 46 && event.charCode <= 57" placeholder="AZN" class="form-control"/>
+                                <button id="addCart" onclick="addCartItem(${id})" class="form-control btn-danger btn-sm"><i class="fa fa-shopping-cart"></i> Add to cart</button>
+                            </div>
+                        </div>
+                    </li>`;
+
+            donationsContainer.innerHTML += li;
+
+        }
+    }
+
+    function addCartItem(donationId) {
+        let input = document.getElementById('donation' + donationId);
+        let price = Math.abs(parseFloat(input.value).toFixed(2));
+
+        input.value = price;
+
+        if (price && price >= 1) {
+            let donation = donations.filter(d => {
+                return d.id == donationId;
+            })[0];
+
+            let newCartId = parseInt(Math.random() * 100000);
+
+            var cartItem = {
+                "id": newCartId,
+                "donationId": donationId,
+                "title": donation.title,
+                "price": price
+            };
+
+            fetch('/api/paymentcarts/AddCartItemToCart', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(cartItem)
+            })
+                .then(resp => resp.json())
+                .then(res => initCartUI(res));
+        }
+        else {
+            alert('The donation amount should be at least 1AZN')
+        }
+
+
+    }
+
+    function deleteCartItem(id) {
+        fetch('/api/paymentcarts/' + id, {
+            method: 'DELETE',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(id)
+        })
+            .then(resp => resp.json())
+            .then(cart => initCartUI(cart));
+    }
+
+    function initCart() {
+        fetch('/api/paymentcarts/CartExists', {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(exists => {
+                if (exists) {
+                    fetch('/api/paymentcarts', {
+                        method: 'GET'
+                    })
+                        .then(resp => resp.json())
+                        .then(cart => {
+                            initCartUI(cart);
+                        });
+
+                }
+                else {
+                    fetch('/api/paymentcarts/AddNewCart', {
+                        method: 'POST'
+                    })
+                        .then(resp => resp.json())
+                        .then(cart => initCartUI(cart));
+                }
+            });
+    }
+
+    function initCartUI(cart) {
+        cartItemsContainer.innerHTML = '';
+
+        for (let cartItem of cart.cartItems) {
+            let tr = `
+                    <tr>
+                        <td class="name"><i class="fa fa-times-circle" onclick="deleteCartItem(${cartItem.id})"></i> ${cartItem.title}</td>
+                        <td class="sub-total">${cartItem.price} AZN</td>
+                    </tr>`;
+
+            cartItemsContainer.innerHTML += tr;
+        }
+
+        cartPriceContainer.innerText = `${cart.totalPrice} AZN`;
+    }
+
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe("pk_test_51Htd3OGZqAOUv17tV7ZUJMpThfIBvJ6J4bVJUijew6E8SzuhMgaReocpoSsmfw5X6Yddzhc0JjdvJbCeHyvL6wd300A1o2irvQ");
+    var checkoutButton = document.getElementById("checkout");
+    checkoutButton.addEventListener("click", function () {
+        fetch('/api/paymentcarts/CartExists', {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(exists => {
+                if (exists) {
+
+                    fetch('/api/paymentcarts', {
+                        method: 'GET'
+                    })
+                        .then(resp => resp.json())
+                        .then(cart => {
+                            if (cart.cartItems.length > 0) {
+                                fetch("/api/Checkouts", {
+                                    method: "POST",
+                                    headers: {
+                                        'content-type': 'application/json'
+                                    },
+                                    body: JSON.stringify(cart)
+                                })
+                                    .then(function (response) {
+                                        return response.json();
+                                    })
+                                    .then(function (session) {
+                                        return stripe.redirectToCheckout({ sessionId: session.id });
+                                    })
+                                    .then(function (result) {
+                                        // If redirectToCheckout fails due to a browser or network
+                                        // error, you should display the localized error message to your
+                                        // customer using error.message.
+                                        if (result.error) {
+                                            alert(result.error.message);
+                                        }
+                                    })
+                                    .catch(function (error) {
+                                        console.error("Error:", error);
+                                    });
+                            }
+                            else {
+                                alert('Cart is empty. Add at least 1 item.')
+                            }
+                        });
+                }
+                else {
+                    alert('Cart not found. Your session has ended');
+                    window.location.href = window.location.origin + '/Donation';
+                }
+            });
+    });
+
+    function toggleCategoryBtnActiveStatus(categoryId) {
+        for (let btn of categoriesContainer.getElementsByTagName('input')) {
+            btn.classList.remove("active");
+        }
+
+        let btn = document.getElementById('category' + categoryId);
+        btn.classList.add("active");
+    }
+</script>

@@ -1,0 +1,43 @@
+﻿@model VoiceOfKarabakh.Application.ViewModels.Gallery.ReadGalleryViewModel;
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+
+@{
+    ViewData["Title"] = localizer["Gallery"].Value;
+}
+
+<link href="~/gallery/style.css" rel="stylesheet" />
+
+<div class="alime-portfolio-area section-padding-80 clearfix">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <!-- Gallery Menu -->
+                <div class="alime-projects-menu wow fadeInUp" data-wow-delay="100ms">
+                    <div class="portfolio-menu text-center">
+                        <button class="btn" data-filter="*" id="galleryTitle">@Model.Title</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row alime-portfolio" id="photosContainer">
+            <!-- Item -->
+            @foreach (var photo in Model.Photos)
+            {
+                <div class="col-12 col-sm-6 col-lg-3 single_gallery_item susa mb-30 wow fadeInUp"
+                     data-wow-delay="100ms">
+                    <div class="single-portfolio-content">
+                        <img src="/Photos/@photo.FilePath" alt="" width="300" height="270">
+                        <div class="hover-content">
+                            <a href="/Photos/@photo.FilePath" class="portfolio-img"><i class="fas fa-search-plus"></i></a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script src="~/gallery/js/jquery.min.js.pagespeed.jm.pJg2D_p7ze.js"></script>
+<script src="~/gallery/js/script.js"></script>
+<script src="~/gallery/js/assets/active.js"></script>

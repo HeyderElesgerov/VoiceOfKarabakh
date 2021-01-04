@@ -1,0 +1,413 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+header {
+  width: 100%;
+  position: -webkit-sticky;
+  position: sticky;
+  z-index: 999;
+  top: 0;
+}
+
+header .main {
+  width: 100%;
+  background-color: #252320;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 0 6vw;
+  position: relative;
+  z-index: 999;
+}
+
+header .main a {
+  text-decoration: none;
+  color: white;
+}
+
+header .main .logo {
+  height: 70px;
+  margin: 10px 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+header .main .logo img {
+  height: 100%;
+  margin-right: 10px;
+}
+
+header .main .logo p {
+  font-family: "Bebas Neue", cursive;
+  font-size: 20px;
+  color: white;
+}
+
+header .main nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+header .main nav a {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-family: "Raleway", sans-serif;
+  font-weight: 600;
+  padding: 6px 12px;
+  margin-left: 12px;
+  border-radius: 2px;
+}
+
+header .main nav a:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+header .main nav .active {
+  background-color: #fff;
+  color: black;
+}
+
+header .main nav .active:hover {
+  background-color: #fff;
+}
+
+header .main .toggle-btn {
+  position: absolute;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  top: 50%;
+  right: 0;
+  display: none;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  height: 26px;
+  margin-right: calc(6vw + 12px);
+  cursor: pointer;
+}
+
+header .main .toggle-btn .bar {
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background-color: white;
+  position: relative;
+}
+
+header .main .toggle-btn .bar::before, header .main .toggle-btn .bar::after {
+  content: "";
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+  background-color: white;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+header .main .toggle-btn .bar::before {
+  top: -6px;
+}
+
+header .main .toggle-btn .bar::after {
+  bottom: -6px;
+}
+
+header .main .toggle-close .bar {
+  background-color: transparent;
+}
+
+header .main .toggle-close .bar::before {
+  left: 0;
+  top: 0;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+header .main .toggle-close .bar::after {
+  left: 0;
+  top: 0;
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+header .subheader {
+  width: 100%;
+  height: 30px;
+  background-color: #e2e2e2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  padding-right: calc(6vw + 12px);
+}
+
+header .subheader .socials {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-right: 30px;
+}
+
+header .subheader .socials a {
+  width: 23px;
+  height: 23px;
+  background-color: #5a5a5a;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 50%;
+  margin: 0 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+header .subheader .socials a i {
+  font-size: 13px;
+  color: white;
+}
+
+header .subheader .socials .facebook:hover {
+  background-color: #3b5998;
+}
+
+header .subheader .socials .twitter:hover {
+  background-color: #1da1f2;
+}
+
+header .subheader .socials .instagram:hover {
+  background-color: #c13584;
+}
+
+header .subheader .socials .telegram:hover {
+  background-color: #0088cc;
+}
+
+header .subheader .socials .youtube:hover {
+  background-color: #ff0000;
+}
+
+header .subheader .lang-options {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  z-index: 999;
+}
+
+header .subheader .lang-options > img {
+  height: 80%;
+}
+
+header .subheader .lang-options > p {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 6px 0 0;
+  font-family: "Poppins", sans-serif;
+}
+
+header .subheader .lang-options > p::before {
+  content: "Language - ";
+}
+
+header .subheader .lang-options .lang-list {
+  position: absolute;
+  display: none;
+  top: 100%;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 125%;
+  background-color: #e2e2e2;
+}
+
+header .subheader .lang-options .lang-list .lang {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  height: 30px;
+  width: 100%;
+  padding: 0 10%;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+header .subheader .lang-options .lang-list .lang:hover {
+  background-color: #5a5a5a;
+}
+
+header .subheader .lang-options .lang-list .lang:hover p {
+  color: white;
+}
+
+header .subheader .lang-options .lang-list .lang img {
+  height: 80%;
+  margin-left: 6px;
+}
+
+header .subheader .lang-options .active {
+  display: block;
+}
+
+@media (max-width: 840px) and (min-width: 661px) {
+  header .main nav a {
+    font-size: 1.4vw;
+  }
+}
+
+@media (max-width: 768px) {
+  header .main .logo {
+    height: 50px;
+  }
+  header .main .logo p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 660px) {
+  header .main {
+    position: relative;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  header .main nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    background-color: #252320;
+    width: 100%;
+    border-top: 2px solid #48433d;
+    height: calc(100vh - 100%);
+    padding-top: 100px;
+    -webkit-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+  }
+  header .main nav a {
+    width: 100%;
+    margin: 0 0 20px 0;
+    border-radius: 0px;
+    text-align: center;
+  }
+  header .main .nav-active {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+  header .main .toggle-btn {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+  header .subheader {
+    height: 0px;
+  }
+  header .subheader .socials {
+    display: none;
+  }
+  header .subheader .lang-options {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    padding: 0 calc(6vw + 12px);
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    height: 70px;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+  }
+  header .subheader .lang-options > p {
+    margin: 0 0 0 6px;
+    color: white;
+  }
+  header .subheader .lang-options > p::before {
+    content: "";
+  }
+  header .subheader .lang-options > img {
+    height: 24px;
+  }
+  header .subheader .lang-options .lang-list {
+    display: none;
+    position: absolute;
+    -webkit-transform: none;
+            transform: none;
+    left: 0;
+    top: 70px;
+    width: 100vw;
+  }
+  header .subheader .lang-options .lang-list .lang {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: row-reverse;
+            flex-direction: row-reverse;
+    padding: 0 calc(6vw + 12px);
+    height: 70px;
+  }
+  header .subheader .lang-options .lang-list .lang img {
+    margin: 0 6px 0 0;
+    height: 24px;
+  }
+  header .subheader .lang-options .active {
+    display: block;
+  }
+}
+/*# sourceMappingURL=header.css.map */

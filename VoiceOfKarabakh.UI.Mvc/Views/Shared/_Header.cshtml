@@ -1,0 +1,192 @@
+﻿@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var controller = this.ViewContext.RouteData.Values["controller"].ToString();
+    var action = this.ViewContext.RouteData.Values["action"].ToString();
+
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultures = LocOptions.Value.SupportedUICultures;
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = Localizer[c.Name].Value })
+        .ToList();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+    string currentCulture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+}
+
+
+<header>
+    <div class="main">
+        <a href="">
+            <div class="logo">
+                <img src="/Header only/assets/img/eagle-logo.png" alt="logo image">
+                <p>Voice of<br>Karabakh</p>
+            </div>
+        </a>
+        <nav>
+            @if (controller == "Home" && action == "Index")
+            {
+                <a class="active" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Home"]</a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Home"]</a>
+            }
+
+            @if (controller == "Home" && action == "About")
+            {
+                <a class="active"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="About">@Localizer["About"]</a>
+            }
+            else
+            {
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="About">@Localizer["About"]</a>
+            }
+
+            @if (controller == "News")
+            {
+                <a class="active" asp-area="" asp-controller="News" asp-action="Index">@Localizer["News"]</a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="News" asp-action="Index">@Localizer["News"]</a>
+            }
+
+            @if (controller == "History")
+            {
+                <a class="active" asp-area="" asp-controller="History" asp-action="Index">@Localizer["History"] </a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="History" asp-action="Index">@Localizer["History"] </a>
+            }
+
+            @*@if (controller == "Monument")
+        {
+            <a class="active" asp-area="" asp-controller="Monument" asp-action="Index">@Localizer["Monuments"] </a>
+        }
+        else
+        {
+            <a asp-area="" asp-controller="Monument" asp-action="Index">@Localizer["Monuments"] </a>
+        }
+
+        @if (controller == "CulturalHeritage")
+        {
+            <a class="active" asp-area="" asp-controller="CulturalHeritage" asp-action="Index">@Localizer["Cultural Heritages"] </a>
+        }
+        else
+        {
+            <a asp-area="" asp-controller="CulturalHeritage" asp-action="Index">@Localizer["Cultural Heritages"] </a>
+        }
+
+        @if (controller == "Celebrity")
+        {
+            <a class="active" asp-area="" asp-controller="Celebrity" asp-action="Index">@Localizer["Celebrities"] </a>
+        }
+        else
+        {
+            <a asp-area="" asp-controller="Celebrity" asp-action="Index">@Localizer["Celebrities"] </a>
+        }*@
+
+            @if (controller == "Gallery")
+            {
+                <a class="active" asp-area="" asp-controller="Gallery" asp-action="Index">@Localizer["Gallery"]</a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Gallery" asp-action="Index">@Localizer["Gallery"]</a>
+            }
+
+            @if (controller == "Donation")
+            {
+                <a class="active" asp-area="" asp-controller="Donation" asp-action="Index">@Localizer["Donation"] </a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Donation" asp-action="Index">@Localizer["Donation"] </a>
+            }
+
+            @if (controller == "Help")
+            {
+                <a class="active" asp-area="" asp-controller="Help" asp-action="Index">@Localizer["Help"] </a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Help" asp-action="Index">@Localizer["Help"] </a>
+            }
+
+            @if (controller == "Home" && action == "Contact")
+            {
+                <a class="active" asp-area="" asp-controller="Home" asp-action="Contact">@Localizer["Contact"] </a>
+
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Home" asp-action="Contact">@Localizer["Contact"] </a>
+            }
+
+        </nav>
+        <div class="toggle-btn">
+            <div class="bar"></div>
+        </div>
+    </div>
+    <div class="subheader">
+        <div class="socials">
+            <a href="https://www.instagram.com/vok.az/" target="blank" class="instagram" title="Foolow Us on Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/VOK.AZ" target="blank" class="facebook" title="Foolow Us on Facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://twitter.com/VOK__AZ" target="blank" class="twitter" title="Foolow Us on Twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.youtube.com/channel/UCD5OlzRqytvr-o6ouYK_hmg" target="blank" class="youtube" title="Follow Us on Youtube">
+                <i class="fab fa-youtube"></i>
+            </a>
+            <a href="https://t.me/vok_az" class="telegram" target="blank" title="Follow Us on Telegram">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
+        </div>
+
+        <form class="lang-options"
+              asp-controller="Culture"
+              asp-action="SetCulture"
+              asp-route-returnUrl="@returnUrl"
+              method="post"
+              role="form"
+              id="languageForm">
+            <img src="/Header only/assets/img/@currentCulture-flag.svg" alt="language country flag" id="image">
+            <p>@Localizer[currentCulture]</p>
+            <div class="lang-list">
+                @foreach (var culture in cultures)
+                {
+                    <div class="lang" data-code="@culture.TwoLetterISOLanguageName" onclick="submit(this)">
+                        <p>@Localizer[culture.TwoLetterISOLanguageName]</p>
+                        <img src="/Header only/assets/img/@culture.TwoLetterISOLanguageName-flag.svg" />
+                    </div>
+                }
+            </div>
+        </form>
+    </div>
+</header>
+
+<script src="/Header only/scripts/header.js"></script>
+
+<script>
+    function submit(langCont) {
+        var form = document.getElementById('languageForm');
+        form.action += '&culture=' + langCont.dataset.code;
+        form.submit();
+    }
+</script>

@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Migrations\20201213063746_InitialDatabase.cs" />
+    <Compile Include="Migrations\20201213063746_InitialDatabase.Designer.cs" />
+    <Compile Include="Migrations\20201215182300_InitialModel.cs" />
+    <Compile Include="Migrations\20201215182300_InitialModel.Designer.cs" />
+    <Compile Include="Migrations\20201219053922_AddDraftedColumnToPostsTable.cs" />
+    <Compile Include="Migrations\20201219053922_AddDraftedColumnToPostsTable.Designer.cs" />
+    <Compile Include="Migrations\20201219154919_RemovedColumnsOfSavedFilesTable.cs" />
+    <Compile Include="Migrations\20201219154919_RemovedColumnsOfSavedFilesTable.Designer.cs" />
+    <Compile Include="Migrations\20201222073956_AddDonationsAndDonationCategoriesTables.cs" />
+    <Compile Include="Migrations\20201222073956_AddDonationsAndDonationCategoriesTables.Designer.cs" />
+    <Compile Include="Migrations\20201223124917_DeleteConstantAmoutColumnFromDonationsTable.cs" />
+    <Compile Include="Migrations\20201223124917_DeleteConstantAmoutColumnFromDonationsTable.Designer.cs" />
+    <Compile Include="Migrations\20201224083034_AddSessionsTable.cs" />
+    <Compile Include="Migrations\20201224083034_AddSessionsTable.Designer.cs" />
+    <Compile Include="Migrations\20201224104137_AddCardsTable.cs" />
+    <Compile Include="Migrations\20201224104137_AddCardsTable.Designer.cs" />
+    <Compile Include="Migrations\20201224104501_AddCardItemsTable.cs" />
+    <Compile Include="Migrations\20201224104501_AddCardItemsTable.Designer.cs" />
+    <Compile Include="Migrations\20201224105028_AddCardSessionIdColumnToCardItemsTable.cs" />
+    <Compile Include="Migrations\20201224105028_AddCardSessionIdColumnToCardItemsTable.Designer.cs" />
+    <Compile Include="Migrations\20201225145743_DeleteDonationPriceColumn.cs" />
+    <Compile Include="Migrations\20201225145743_DeleteDonationPriceColumn.Designer.cs" />
+    <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Stripe.net" Version="39.31.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoiceOfKarabakh.Application\VoiceOfKarabakh.Application.csproj" />
+    <ProjectReference Include="..\VoiceOfKarabakh.Domain\VoiceOfKarabakh.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

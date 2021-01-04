@@ -1,0 +1,350 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+
+@{
+    ViewData["Title"] = localizer["Title"].Value;
+    string currentCultureCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comfortaa:wght@300;400;500;600;700&family=Raleway:wght@400;600&family=Patua+One&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/Homepage/styles/home.css">
+
+<input id="homePageCultureCode" value="@currentCultureCode" hidden/>
+
+<section class="main-ctn">
+    <h1 class="section-header">@localizer["Latest"]</h1>
+    <div class="latest-content">
+        <a class="post">
+            <div class="thumb">
+                <div class="overlay"></div>
+            </div>
+            <div class="data">
+                <p class="post-name"></p>
+            </div>
+        </a>
+        <a class="post">
+            <div class="thumb">
+                <div class="overlay"></div>
+            </div>
+            <div class="data">
+                <p class="post-name"></p>
+            </div>
+        </a>
+        <a class="post">
+            <div class="thumb">
+                <div class="overlay"></div>
+            </div>
+            <div class="data">
+                <p class="post-name"></p>
+            </div>
+        </a>
+
+        <div class="donation-box">
+            <div class="donation-cta">
+                <p>@localizer["Want to help this cause ?"]</p>
+            </div>
+            <div class="donation-btn">
+                <button onclick="window.location.href = window.location.origin + '/Donation'" 
+                        class="donate">@localizer["Make a Donation"]</button>
+            </div>
+            @*<div class="donation-amount">
+                    <p><span>$ 126753</span><br>donated so far</p>
+                </div>*@
+        </div>
+    </div>
+    <h1 class="section-header">@localizer["Popular"]</h1>
+    <div class="popular-content">
+        <main>
+            <button class="see-more" onclick="more()">@localizer["See More"]</button>
+        </main>
+        <div class="spotlight-1">
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+        </div>
+        <div class="spotlight-2">
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+        </div>
+    </div>
+    <h1 class="section-header">@localizer["Stay Updated"]</h1>
+    <div class="updated-content">
+        <div class="cta-box">
+            <input name="email" type="email" placeholder="Enter your e-mail" class="email-input">
+            <button class="email-btn">Join The Newsletter</button>
+            <p class="email-removal">Remove your e-mail</p>
+        </div>
+    </div>
+</section>
+
+<script src="/Homepage/scripts/home.js"></script>
+<script>
+    //Getting the containers from DOM
+    let cultureCode = document.getElementById('homePageCultureCode').value;
+    let latesPostContainers = document.querySelector('.latest-content').querySelectorAll('.post');
+    let page;
+    let nextPageExists;
+
+    function initLatestNewsUI(newsPosts) {
+        let i = 0;
+        for (i; i < newsPosts.length; i++) {
+            let postContainer = latesPostContainers[i];
+            let newsPost = newsPosts[i];
+
+            postContainer.href = "/News/Read?id=" + newsPost.id;
+            postContainer.querySelector('.thumb').style.backgroundImage = `url("/Photos/${newsPost.photoFileName}")`;
+            postContainer.querySelector('.post-name').innerText = `${newsPost.title}`;
+        }
+
+        //delete remaining containers
+        for (i; i < 3; i++) {
+            latesPostContainers[i].remove();
+        }
+    }
+
+    function initPopularPostsUI(posts) {
+        for (let i = 0; i < posts.length; i++) {
+            let post = posts[i];
+
+            var postContainer = createPopularPost();
+
+            if (post.postType.toLowerCase() == "news") {
+                postContainer.href = "/News/Read?id=" + post.id;
+            }
+            else {
+                postContainer.href = "/History/Read?id=" + post.id;
+            }
+            
+            postContainer.querySelector('.p-thumb').style.backgroundImage = `url("/Photos/${post.photoFileName}")`;
+
+            postContainer.querySelector('.p-post-name').innerText = `${post.title}`;
+            postContainer.querySelector('.p-date').innerText = `${convertDateFormat(post.created)}`;
+            postContainer.querySelector('.seen').querySelector('span').innerText = `${post.readingCount}`;
+
+            addPostItem(postContainer);
+        }
+        
+    }
+
+    //Filling lates news
+    fetch("/api/newsposts/GetLatestPosts/3/" + cultureCode)
+        .then(response => response.json())
+        .then(data => initLatestNewsUI(data));
+
+    //Filling popular news
+    fetch(`/api/historyposts/GetPopularPosts/5/${cultureCode}/1`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            let posts = data.elements;
+            nextPageExists = data.nextPageExists;
+
+            if (nextPageExists === false)
+                document.getElementsByClassName('see-more')[0].remove();
+
+            page = 1;
+
+            initPopularPostsUI(posts);
+        });
+    
+    /*function more() {
+        if (nextPageExists) {
+            fetch("/api/popularposts/5/" + (page + 1))
+                .then(response => response.json())
+                .then(data => {
+                    nextPageExists = data.nextPageExists;
+                    page += 1;
+
+                    if (data.nextPageExists === false)
+                        document.getElementsByClassName('see-more')[0].remove();
+
+                    let elements = data.elements;
+
+                    elements.forEach(el => {
+                        var post = createPopularPost();
+
+                        if (el.postType.toLowerCase() == "news") {
+                            post.querySelector('.p-thumb').style.backgroundImage = `url("/Photos/News/${el.photoPath}")`;
+                            post.href = "/News/Read?id=" + el.id;
+                        }
+                        else {
+                            post.querySelector('.p-thumb').style.backgroundImage = `url("/Photos/History/${el.photoPath}")`;
+                            post.href = "/History/Read?id=" + el.id;
+                        }
+
+                        post.querySelector('.p-post-name').innerText = `${el.title}`;
+                        post.querySelector('.p-date').innerText = `${convertDateFormat(el.createdDate)}`;
+                        post.querySelector('.seen').querySelector('span').innerText = ` ${el.readingCount}`;
+
+                        addPostItem(post);
+                    })
+                })
+        }
+    }
+    */
+    function convertDateFormat(date) {
+        let month = date.slice(5, 7);
+        let day = date.slice(8, 10);
+        let monthName = '';
+        switch (month) {
+            case '01':
+                monthName = 'Jan';
+                break;
+            case '02':
+                monthName = 'Feb';
+                break;
+            case '03':
+                monthName = 'Mar';
+                break;
+            case '04':
+                monthName = 'Apr';
+                break;
+            case '05':
+                monthName = 'May';
+                break;
+            case '06':
+                monthName = 'Jun';
+                break;
+            case '07':
+                monthName = 'Jul';
+                break;
+            case '08':
+                monthName = 'Aug';
+                break;
+            case '09':
+                monthName = 'Sep';
+                break;
+            case '10':
+                monthName = 'Oct';
+                break;
+            case '11':
+                monthName = 'Now';
+                break;
+            case '12':
+                monthName = 'Dec';
+                break;
+        }
+        return monthName + ' ' + day;
+    }
+
+    function createPopularPost() {
+        var a = document.createElement('a');
+        a.classList.add('p-post');
+        a.style = "text-decoration: none; "
+
+        var thm2 = document.createElement('div');
+        thm2.classList.add('p-thumb')
+        thm2.classList.add('thm-2')
+
+        var pData = document.createElement('div');
+        pData.classList.add('p-data');
+
+        a.appendChild(thm2);
+        a.appendChild(pData);
+
+        var postName = document.createElement('div')
+        postName.classList.add('p-post-name')
+        var date = document.createElement('div')
+        date.classList.add('p-date')
+        var interactions = document.createElement('div');
+        interactions.classList.add('interactions')
+
+        pData.appendChild(postName)
+        pData.appendChild(date)
+        pData.appendChild(interactions)
+
+        var seen = document.createElement('div');
+        seen.classList.add('seen')
+
+        interactions.appendChild(seen);
+
+        var eye = document.createElement('i');
+        eye.classList.add('fas')
+        eye.classList.add('fa-eye')
+
+        seen.appendChild(eye);
+
+        var span = document.createElement('span')
+        seen.appendChild(span)
+
+        return a;
+    }
+
+    function addPostItem(item) {
+        var postsContainer = document.querySelector('.popular-content').getElementsByTagName('main')[0];
+        postsContainer.insertBefore(item, document.getElementsByClassName('see-more')[0]);
+    }
+    /*
+    var emailBtn = document.getElementsByClassName('email-btn')[0];
+
+    emailBtn.onclick = function () {
+        var emailBox = document.getElementsByName('email')[0]
+        var email = emailBox.value;
+
+        if (email) {
+            if (validateEmail(email)) {
+                var subscribtion = {
+                    email: email
+                };
+
+                if (emailBtn.classList.contains('removal-mode')) {
+                    //unsubscribe
+                    fetch(window.location.origin + '/api/subscribtions', {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(subscribtion)
+                    })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result === true) {
+                                alert('You unsubscribed successfully');
+                                emailBox.value = "";
+                            }
+                            else {
+                                alert('Subscribtion not found!');
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+                else {
+                    //subscribe
+                    fetch(window.location.origin + '/api/subscribtions', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(subscribtion)
+                    })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result === true) {
+                                alert('You have subscribed successfully');
+                                emailBox.value = "";
+                            }
+                            else {
+                                alert('This subscribtion exists!');
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+            else {
+                alert('Email is not an email!');
+            }
+
+        }
+    }
+
+    function validateEmail(email) {
+        const re = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }*/
+</script>

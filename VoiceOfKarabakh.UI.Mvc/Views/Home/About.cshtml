@@ -1,0 +1,900 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+
+@{
+    Layout = null;
+    ViewData["About"] = localizer["About"].Value;
+}
+<!doctype html>
+<html lang="az">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Voice Of Karabakh | @ViewData["About"]</title>
+    <meta name="description" content="Voice Of Karabakh plotforması, Qarabağın səsini dünyaya tanıtdırmaqdır məqsədimiz!">
+
+    <link rel="stylesheet" type="text/css" href="/about/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/about/css/1.css">
+
+    <link rel="stylesheet" type="text/css" href="/about/css/main-nav.css">
+
+
+    <link rel="stylesheet" href="/about/css/popup.min.css">
+
+    <link rel="stylesheet" href="/about/css/content.min.css">
+
+    <link rel="stylesheet" href="/about/css/2main.min.css">
+
+    <link rel="stylesheet" href="/about/css/simple.min.css">
+
+
+
+    <link rel="canonical" href="https://www.vok.az/haqqımızda">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="/about/img/PicsArt_12-01-03.49.31.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/about/img/PicsArt_12-01-03.49.31.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Comfortaa:wght@300;400;500;600;700&family=Raleway:wght@400;600&family=Patua+One&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet">
+    <script rel="preload" src="https://kit.fontawesome.com/3c8d729e68.js" crossorigin="anonymous" as="script"></script>
+    <link rel="stylesheet" href="~/about/styles/header.css">
+    <link rel="stylesheet" href="~/about/styles/footer.css">
+
+    <style>
+        body {
+            font-weight: 300;
+        }
+    </style>
+
+    <meta property="og:type" content="website">
+
+    <meta name="generator" content="Vok.az">
+</head>
+
+<body class="about-page about-page__2019   hs-content-id-29971029772 hs-site-page page hs-content-path-about-us hs-content-name-about-us  ">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+
+    @await Html.PartialAsync("_Header")
+
+    <main role="main" class="body-container" style="padding-bottom: 5.66em !important;">
+        <div id="hs_cos_wrapper_module_155954045134415" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+            <section class="hero hero__video background">
+                <div class="fullscreen-video-wrap">
+                    <video autoplay muted loop src="/about/img/4.mp4" poster=""></video>
+                    <div class="wrapper main-content">
+                        <h1 class="white"></h1>
+                    </div>
+                    <div class="hero__video-overlay" style="background-color:rgba(7, 55, 99,0.64)"></div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 1440 116.91" class="hero-curve" preserveaspectratio="none">
+                    <path fill="#fff" fill-rule="evenodd" d="M0 115.91c158.5 0 117.37-78.52 473.1-26.18C765.4 122.55 943 8.08 1067.2.69c156-9.28 188.5 75.15 372.8 75.22v41H0a6.68 6.68 0 0 1 0-1z" />
+                </svg>
+            </section>
+        </div>
+
+        <div id="hs_cos_wrapper_module_155954649937032" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+            <section id="" class="section-header__wrapper advanced-column__2019 " style="background-color:#ffffff">
+
+                <div class="wrapper padding-top__small padding-bottom__xsmall section-header__container text-center">
+
+
+                    <div class="main-section-title  dark-blue ">
+                        <h2>Komandamızla Tanış Olun!</h2>
+                        <div class="supporting-content">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- start of team --->
+        <div id="hs_cos_wrapper_module_158840294464524" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+            <!-- start of team --->
+            <section class="team__container wrapper padding-bottom__small">
+
+                <div class="team__filter-container filters-button-group">
+                    <button class="button is-checked" data-filter="*">Hamısı</button>
+                    <button class="button" data-filter="#team__leadership">Layihə Rəhbərləri</button>
+                    <button class="button" data-filter="#koordinator">Koordinatorlar</button>
+                    <button class="button" data-filter="#team__special-ops">Moderatorlar</button>
+                    <button class="button" data-filter="#team__web-dev">Web Developerlər</button>
+                    <button class="button" data-filter="#team__edisons">Qrafik Dizaynerlər</button>
+                    <button class="button" data-filter="#translators">Tərcüməçilər</button>
+                </div>
+
+                <div id="team-wrapper" class="team-grid">
+
+
+
+                    <div id="team__leadership" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/aqsin bey.png">
+                                <img class="image__gif" src="/about/img/uzvler/aqsin bey.png">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-d0d742b7e554071eda19a609c721b121" class="bio__main jsTabContent active">
+                                    <p>CEO & Founder | Baku Life LLC</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name">
+                                <a style="color: black;" href="http://bakulifetravel.com/az/">Aqşin Hüseyni</a>
+                            </h4>
+                            <p class="job-title">Layihə Rəhbəri</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__leadership" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Jeyhun Nasibbayli.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Jeyhun Nasibbayli.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-d0d742b7e554071eda19a609c721b121" class="bio__main jsTabContent active">
+                                    <p>Director Of Revenue & Reservations at Rotana Hotels | Commercial Lead | Business Data Analyst | MBA | CRM</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/jeyhun-nasibbayli/">Jeyhun Nasibbayli</a></h4>
+                            <p class="job-title">Layihə Rəhbəri</p>
+                        </div>
+                    </div>
+
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Sh.A9.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Sh.A9.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-d0d742b7e554071eda19a609c721b121" class="bio__main jsTabContent active">
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.facebook.com/ShukurluAlekber">Alakbar Shukurlu</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+                    <div id="koordinator" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Shabnam MirJafarli.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Shabnam MirJafarli.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>Bakı Dövlət Universiteti, Kitabşünaslıq-İnformasiya fakültəsinin tələbəsi</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/shabnam-mirjafarova-813257200">Şəbnəm Mircəfərova</a></h4>
+                            <p class="job-title">Koordinator</p>
+                        </div>
+                    </div>
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Kamil Aqaverdiyev.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Kamil Aqaverdiyev.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-f3d9e0b37b3c01e53ab28397d648b203" class="bio__main jsTabContent active">
+                                    <p>
+                                        Mən Kamil Ağaverdiyev qısa olaraq kamilgraphics olaraq tanınıram. 22 yaşım var. Qrafik Dizayn ilə 6 ildir məşğulam Freelancer kimi fəaliyyət göstərirəm. Voice of Karabakh'da vətən üçün informasiya müharibəsində Zəfər
+                                        qazanmaq üçün Qrafik Dizayner kimi fəaliyyət göstərirəm.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.behance.net/kamilgraphics">Kamil Ağaverdiyev</a></h4>
+                            <p class="job-title">Qrafik Dizayner</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__web-dev" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/mrOmar.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/mrOmar.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-3f491dc40809e4cbbcf8e6c80692419a" class="bio__main jsTabContent active">
+                                    <p>Mən Ömər Balaqadaşov. <br> 2 ildən uzun müddətdirki web sahəsində Freelancer olaraq çalışıram.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/omarbalaqadashov/">Ömər Balaqadaşov</a></h4>
+                            <p class="job-title">Web Developer</p>
+                        </div>
+                    </div>
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Nergiz ibrahimova.png">
+                                <img class="image__gif" src="/about/img/uzvler/Nergiz ibrahimova.png">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-e5be5ca98dd10d77239d3dfd61ef6426" class="bio__main jsTabContent active">
+                                    <p>
+                                        Mənim adım Nərgizdir, 23 yaşım var. Adobe Photoshop, Illustrator, Indesign programlarda işləyirəm, və Premiere Pro üzrə baza biliklərim var. Logo, flyer, vizitka, poster, social media postlar, menu, kataloq və s. yarada
+                                        bilərəm.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="http://behance.net/nargizibragim ">Nərgiz İbrahimova</a></h4>
+                            <p class="job-title">Qrafik Dizayner </p>
+                        </div>
+                    </div>
+
+
+                    <div id="translators" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Lale Metin.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Lale Metin.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-ad2464162fcf40ed260d20cf8313fb9d" class="bio__main jsTabContent active">
+                                    <p>VOK qrupunun tərcümə bölməsi üzrə admini.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/lala-metin-899bb84a">Lalə Mətin</a></h4>
+                            <p class="job-title">Tərcüməçi</p>
+                        </div>
+                    </div>
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Revan Dadaszade.jpeg">
+                                <img class="image__gif" src="/about/img/uzvler/Revan Dadaszade.jpeg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-f3d9e0b37b3c01e53ab28397d648b203" class="bio__main jsTabContent active">
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/revan-dadashzade-4aa802172/">Rəvan Dadaşzadə</a></h4>
+                            <p class="job-title">Qrafik Dizayner</p>
+                        </div>
+                    </div>
+
+                    <div id="koordinator" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Sebine Mehdiyeva.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Sebine Mehdiyeva.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>PR və Marketinq üzrə mütəxəssisəm. Və keçmiş turizmçiyəm.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/sabina-mehdiyeva-92815534/">Səbinə Mehdiyeva</a></h4>
+                            <p class="job-title">Koordinator</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__web-dev" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/noiSeymur.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/noiSeymur.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-7a12a2f1f8be279d0feffc92a66a1458" class="bio__main jsTabContent active">
+                                    <p>Web Developer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/noiseymur/">Seymur Rəhimov</a></h4>
+                            <p class="job-title">Web Developer</p>
+                        </div>
+                    </div>
+
+
+
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Naz Ramizqizi.png">
+                                <img class="image__gif" src="/about/img/uzvler/Naz Ramizqizi.png">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-9d2b7604ec6e65d4ee07e417e3b4fd1a" class="bio__main jsTabContent active">
+                                    <p>Naz Ramizqızı 12.05.1995 <br> Təhsil - Azərbaycan Dövlət Rəssamlıq Akademiyasi (2012-2016) <br> Peşə - Qrafik Dizayner, Rəqəmsal (Dijital) Rəssam.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name">
+                                <a style="color: black;" href="https://www.linkedin.com/in/naz-ramiz-6471ba133/">Naz Ramizqızı</a>
+                            </h4>
+                            <p class="job-title">Qrafik Dizayner</p>
+                        </div>
+                    </div>
+
+
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Emrah pashayev.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Emrah pashayev.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>Paşayev Əmrah Ədalət Oğlu. 24 dekabrın 2001 - ci il doğulmuşdur, Azərbaycan Texnologiya Universiteti 2-ci kurs tələbəsi. </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="http://tamerlanism.com/">Əmrah Paşayev</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+
+                    <div id="translators" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Leyla Agadiyeva.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Leyla Agadiyeva.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-7a1405384a25f01f124ecbc4ec940cff" class="bio__main jsTabContent active">
+                                    <p>Ağadiyeva Leyla. Tərcüməçi ( rus dili). ARA nəzdində incəsənət kollecinde 3 kursda təhsil alıram. Uzun zamandır rəsimlə məşğul oluram. Bir çox dekorativ tətbiqi sənət növləri ilə məşğul oluram.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 style="color: black;" class="name">Leyla Ağadiyeva</h4>
+                            <p class="job-title">Tərcüməçi ( rus dili)</p>
+                        </div>
+                    </div>
+
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Nigar Mirzeyeva.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Nigar Mirzeyeva.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-5aff25010f850b0b103c310503ac8d1d" class="bio__main jsTabContent active">
+                                    <p>Yeniliyi sevirəm. İncəsənətlə maraqlanıram. Hobbi olaraq musiqi və rəsmlə məşğulam. Daim inkişaf etmək tərəfdarıyam. "Voice of Karabakh" komandasında yer almaqla dünyaya Qarabağ gerçəklərini çatdırmaq fikrindəyəm.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://https://www.linkedin.com/in/nigar-mirzeyeva-a31ab6195 ">Nigar Mirzəyeva</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/huseyn ali.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/huseyn ali.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-9d2b7604ec6e65d4ee07e417e3b4fd1a" class="bio__main jsTabContent active">
+                                    <p>Doğum tarixi 20.07.1991 <br> <u>Ali təhsil</u> - Azərbaycan Dövlət Neft ve Sənaye Universiteti (ADNSU) </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name">
+                                <a style="color: black;" href="https://www.behance.net/husseynhsali">Ali Hüseyn</a>
+                            </h4>
+                            <p class="job-title">Qrafik Dizayner</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Qedimli Meltem.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Qedimli Meltem.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>19.11.1989cu ildə Bakıda anadan olmuşam.Öz sahəm müəllimlik olsada, 5 ildir turizm sahəsində çalışıram. </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.facebook.com/meltem.qedimli.3">Məltəm Qədimli</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Babazade Leyla.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Babazade Leyla.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>Leyla Cəfərli Aqşin qızı. Bakı Dövlət Universiteti tarix fakultəsi (bakalavr/magistr ) məzunu. AMEA Tarix institutunun doktorantı. Çalışdığım sahə -turizm</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/leyla-babazade-jafarli-923b9416a/ ">Leyla Cəfərli</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Abdullayeva Mahsati.jpeg">
+                                <img class="image__gif" src="/about/img/uzvler/Abdullayeva Mahsati.jpeg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/mfinance-az-00454016a">Mahsati Abdullayeva</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Turkana Allahverdiyeva.png">
+                                <img class="image__gif" src="/about/img/uzvler/Turkana Allahverdiyeva.png">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>
+                                        Türkanə Allahverdiyeva - <br> Canlı yayım təşkilatçısı, şəhid və qazi ailələrinə yardım fonduna dəstəkçi Türkanə Allahverdiyeva İstanbulda Ibn Haldun Üniversiteti - Tarix bölümünün 18-ci əsr Osmanlı Tarixi doktorantıdır.
+                                        Eyni zamanda ''Son Osmanlı Dönəmi ve Müasir Türkiyə Tarixi'', ''İnsan və Bəşər Tarixi'' dərslərini verir.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://independent.academia.edu/TurkanaAllahverdi">Türkanə Allahverdiyeva</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/qehremenov Murad.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/qehremenov Murad.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-3d882dc798b07a0d74135dcc3591f94b" class="bio__main jsTabContent active">
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/qahramanov/">Murad Qəhrəmanov</a></h4>
+                            <p class="job-title">Videoqraf</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Cavid Cavadov.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Cavid Cavadov.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>Yardımların toplanması üzrə təşkilatçı. <br> Az Line Travel MMC şirkətinin direktoru.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 style="color: black;" class="name">
+                                Cavid Cavadov</a>
+                            </h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+                    <div id="translators" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Alpay Serifli.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Alpay Serifli.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-0dbfe0e886b1e4d1a688ab7de5c0dc81" class="bio__main jsTabContent active">
+                                    <p>
+                                        Mən 14.10.1997-ci il Bakı şəhərində doğulmuşam.BDU Şərqşünaslıq(regionşünas) İran üzrə bitirmişəm.Əsasən siyasi xəbərlərlə maraqlanmağı,idmanla məşğul olmağı sevirəm.Fərdi şəkildə İran xəbər saytlarına öz haqq səsimizi
+                                        çatdırmağa çalışıram..
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/alpay-sharif-30ba421b4">Alpay Şərifli</a></h4>
+                            <p class="job-title">Tərcüməçi(fars dili)</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Kamal Askerzade.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Kamal Askerzade.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>
+                                        1990 cı il 15 oktyabr Lənkəranda anadan olmuşam.2008 ci ildə Bakı İslam Universitetinin Şərqşünaslıq fakultəsinə daxil olaraq, 2013 cü ildə fərqlənmə ilə bitirmişəm.Universiteti bitirdikdən sonra ölkənin bir çox hotellərində
+                                        və turizm şirkətlərində rəhbər vəzifələrdə çalışmışam. İşlədiyim dönəmlərdə müxtəlif ölkələrin turizm sərgilərində və seminarlarında iştirak etmişəm.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/mwlite/in/kamal-askerzade-998961101">Kamal Əskərzadə</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__web-dev" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Memmedli Aygul.jpeg">
+                                <img class="image__gif" src="/about/img/uzvler/Memmedli Aygul.jpeg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1f010cae603c51f04bea1fe3a295469f" class="bio__main jsTabContent active">
+                                    <p>Tələbə- Azərbaycan Respublikasının Prezidenti yanında Dövlət İdarəçilik Akademiyası</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/aygul-mammedli-0b91a5174">Aygül Məmmədli</a></h4>
+                            <p class="job-title">Web Developer</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Samir Garazade.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Samir Garazade.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>Supply Chain System Manager at Arsenal Group LLC</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/samir-garazade-0695221ab">Samir Qarazadə</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+                    <div id="translators" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/veliyev elman.jpeg">
+                                <img class="image__gif" src="/about/img/uzvler/veliyev elman.jpeg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-eafe7378c687f1416f616b10a59fa893" class="bio__main jsTabContent active">
+                                    <p>
+                                        İngilis və Rus dilləri üzrə tərcüməçi.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 style="color: black;" class="name">Elman Vəliyev</h4>
+                            <p class="job-title">Tərcüməçi</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Aynur serifova.jpeg">
+                                <img class="image__gif" src="/about/img/uzvler/Aynur serifova.jpeg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p>Bachelor in Tourism and Hospitality (Graduated with Distinction). <br> Specialisation: Tourism and Hotel Management. </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="http://linkedin.com/in/aynur-sharifova-642133161">Aynur Şərifova</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+
+
+
+                    <div id="team__special-ops" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Nermin Agayeva.jpeg">
+                                <img class="image__gif" src="/about/img/uzvler/Nermin Agayeva.jpeg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-1d6fd4f1fdd2cbe9d59e9e9db4d301cb" class="bio__main jsTabContent active">
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.facebook.com/profile.php?id=100008149009365">Nərmin Ağayeva</a></h4>
+                            <p class="job-title">Moderator</p>
+                        </div>
+                    </div>
+
+                    <div id="team__web-dev" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Heyder Elesgerov.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Heyder Elesgerov.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-9d336669281699eff668592dc216d5c7" class="bio__main jsTabContent active">
+                                    <p>.NET Core Back-End developer.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/mwlite/in/heyder-elesgerov-566755194">Heydər Ələsgərov</a></h4>
+                            <p class="job-title">.NET Core Back-End developer</p>
+                        </div>
+                    </div>
+
+                    <div id="team__web-dev" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/ibad asadov.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/ibad asadov.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-fcc347a259085f350b9ab8d6353e5c8b" class="bio__main jsTabContent active">
+                                    <p>Front end Developer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.facebook.com/ibad.esedov.9659/">Ibad Asadov</a></h4>
+                            <p class="job-title">Front end Developer</p>
+                        </div>
+                    </div>
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/tamerlan ismayilzade.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/tamerlan ismayilzade.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-11bfece8e1c582ab2282ae0975455897" class="bio__main jsTabContent active">
+                                    <p>
+                                        2009 – dan bu günə, reklam və mətbəə sahəsində fəaliyyət göstərirəm. Kitab üz qapaqları dizaynlarında mütəxəsisləşmişəm. İki kitab müəllifi.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="http://tamerlanism.com/"> Tamerlan İsmayılzadə</a></h4>
+                            <p class="job-title">Qrafik Dizayner</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__web-dev" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Oruc Rehimov.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Oruc Rehimov.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-fcc347a259085f350b9ab8d6353e5c8b" class="bio__main jsTabContent active">
+                                    <p>Front end -Web Developer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/in/oruc-rehimov-4b18661b7">Oruc Rəhimov</a></h4>
+                            <p class="job-title">Front end -Web Developer</p>
+                        </div>
+                    </div>
+
+                    <div id="team__web-dev" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/khalilov.jpeg">
+                                <img class="image__gif" src="/about/img/uzvler/khalilov.jpeg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-9d336669281699eff668592dc216d5c7" class="bio__main jsTabContent active">
+                                    <p>Web developer.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 class="name"><a style="color: black;" href="https://www.linkedin.com/mwlite/in/aghabay-khalilov-b8172b1b7">Ağabəy Xalilov</a></h4>
+                            <p class="job-title">Web developer</p>
+                        </div>
+                    </div>
+
+
+                    <div id="team__edisons" class="team-grid__item-container">
+                        <button class="team-grid__exit">x</button>
+                        <div class="team-grid__item active-bio">
+                            <div class="team-grid__image">
+                                <img class="image__main" src="/about/img/uzvler/Novruz Hasanov.jpg">
+                                <img class="image__gif" src="/about/img/uzvler/Novruz Hasanov.jpg">
+                            </div>
+                            <div class="team-grid__content">
+                                <div id="tab_bio-5811dd2fc240ac2f5dbeb70f2881b37d" class="bio__main jsTabContent active">
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-grid__name">
+                            <h4 style="color: black;" class="name">Novruz Həsənov</h4>
+                            <p class="job-title">Qrafik Dizayner </p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </section>
+            <!-- end of team ---->
+        </div>
+
+        <script>
+            document.querySelector('button').addEventListener('click', function () {
+                fetch('https://vok.az/about')
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((myContent) => {
+                        document.querySelector('.par').innertxt = myContent;
+                        document.querySelector('.par').classList.add('box');
+                    });
+
+            }, false);
+        </script>
+
+        <span id="hs_cos_wrapper_flex_col_under_team" class="hs_cos_wrapper hs_cos_wrapper_widget_container hs_cos_wrapper_type_widget_container" data-hs-cos-general-type="widget_container" data-hs-cos-type="widget_container">
+            <div id="hs_cos_wrapper_widget_1591017997915" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+                <section class="section
+                section--generic-content
+                t-padding--standard
+                b-padding--standard
+                " id="">
+                    <div class="wrapper
+              wrapper--normal">
+
+                        <div class="generic-content-grid
+                generic-content-grid--valign-center">
+                            <div class="generic-content-grid__item
+                    generic-content generic-content--center
+                    " style="--col-width: 1;
+                    --theme-color: ;">
+                                <img class="generic-content__large-image wow fadeIn" src="/about/img/az-map.png" alt="bz-team-photo-2019" loading="lazy">
+                            </div>
+                            <div class="generic-content-grid__item
+                    generic-content
+
+                    " style="--col-width: 1;
+                    --theme-color: ;">
+                                <div class="generic-content__body ">
+                                    <h2>Biz Kimik?</h2>
+                                    <p>Voice Of Karabakh platformasında, Azərbaycan gəncləri olaraq dünya mediasına həqiqətləri çatdırmaq üçün gücümüzü birləşdirmişik. Torpaqlarımızın bütövlüyünü, tariximizi, mədəniyyətimizi, incəsənitimizi, qısacası Azərbaycanın mədəni-ədəbi və tarixi irsini dünyaya dəqiq və qərəzsiz çatdırmağı hədəfləmişik. Bu yolda bir çox gəncimiz könüllü olaraq bizə faktlarla Azərbaycan həqiqətlərini dünyaya çatdırmaqda yardımçı olur. Gerçəkləri Voice Of Karabakh sizə, dürüst və qərəzsiz çatdıracaq! Qarabağ Azərbaycandır! </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </div>
+
+            <div id="hs_cos_wrapper_widget_1591018774103" class="hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_module" data-hs-cos-general-type="widget" data-hs-cos-type="module">
+
+    </main>
+
+    @await Html.PartialAsync("_Footer")
+
+    <script src="/about/js/top.min.js"></script>
+    <script src="/about/js/_Meet_the_Team.min.js"></script>
+    <script src="~/about/js/main.min.js"></script>
+</body>
+
+</html>

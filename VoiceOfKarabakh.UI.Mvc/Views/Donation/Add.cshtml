@@ -1,0 +1,254 @@
+﻿@model List<System.Globalization.CultureInfo>;
+
+@{
+    ViewData["Title"] = "Add Donation";
+    Layout = "_AdminLayout";
+}
+
+<link href="~/ImageUploaderWithPreview/index.css" rel="stylesheet" />
+<link href="~/richtexteditor/rte_theme_default.css" rel="stylesheet" />
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+@foreach (var culture in Model)
+{
+    <input class="culture" value="@culture.TwoLetterISOLanguageName" hidden />
+}
+<div class="loader" id="loader" style="display: block;"></div>
+
+<form method="post" enctype="multipart/form-data" id="addForm">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="text-center">
+            <h4>@Model[i].DisplayName</h4>
+        </div>
+
+        <div class="form-group">
+            <label>Title</label>
+            <input class="form-control" id="@Model[i].TwoLetterISOLanguageName-title" placeholder="Enter title" />
+
+        </div>
+
+        <div class="form-group">
+            <label>Meta Title</label>
+            <input class="form-control" id="@Model[i].TwoLetterISOLanguageName-metaTitle" placeholder="Enter meta title" />
+        </div>
+
+        <div class="form-group">
+            <label>Content</label>
+            <input id="@Model[i].TwoLetterISOLanguageName-content" hidden />
+            <div id="@Model[i].TwoLetterISOLanguageName-editor" class="richtexteditor" style="width: 100%;">
+            </div>
+        </div>
+        <br />
+    }
+
+    <div class="form-group">
+        <label><b>Donation Category</b></label>
+        <select class="form-control" id="donationCategoriesSelectList">
+        </select>
+    </div>
+    <br />
+    @*<div class="form-group">
+        <label><b>Has constant price?</b></label>
+        <input type="checkbox" onclick="togglePrice()" id="constantPriceCheckBox" />
+    </div>
+    <div class="form-group" id="priceContainer" style="visibility: hidden">
+        <label><b>Price</b></label><span>(Required field)</span>
+        <input min="1" class="form-control" id="price" type="number" />
+    </div>*@
+
+    <div class="image-input">
+        <input type="file" accept="image/*" id="imageInput" name="HeaderPhoto">
+        <label for="imageInput" class="image-button"> Choose image(Required field)</label>
+
+        <img src="" class="image-preview">
+        <span class="change-image">Choose different image</span>
+    </div>
+    <div class="form-group">
+        <input class="form-control btn btn-success" type="button" onclick="publish()" value="Publish" />
+    </div>
+</form>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/ImageUploaderWithPreview/index.js"></script>
+<script src="~/richtexteditor/rte.js"></script>
+<script src="~/richtexteditor/plugins/all_plugins.js"></script>
+
+<script>
+    let cultures = [];
+
+    let form = document.getElementById('addForm');
+    let loader = document.getElementById('loader');
+    let priceContainer = document.getElementById('priceContainer');
+
+    for (let cultureField of document.getElementsByClassName('culture')) {
+        cultures.push(cultureField.value);
+    }
+
+        initEditors();
+        initDonationCategories();
+    function initEditors() {
+        let editors = [];
+
+        for (let culture of cultures) {
+            var editor = new RichTextEditor(document.getElementById(culture + "-editor"));
+            editors.push(editor);
+        }
+
+        for (let i = 0; i < cultures.length; i++) {
+            let editor = editors[i];
+            let culture = cultures[i];
+
+            editor.setHTMLCode(document.getElementById(culture + "-content").value);
+            editor.attachEvent("change", function () {
+                console.log(editor.getHTMLCode());
+                document.getElementById(culture + '-content').value = editor.getHTMLCode();
+            });
+        }
+    }
+
+    function initDonationCategories() {
+            fetch('/api/donationcategories/az', {
+                method: 'GET'
+            })
+                .then(resp => resp.json())
+                .then(categories => {
+                    var selectlist = document.getElementById('donationCategoriesSelectList');
+
+                    for (let donationCategory of categories) {
+                        let option = `<option value="${donationCategory.id}">${donationCategory.title}</option>`;
+                        selectlist.innerHTML += option;
+                    }
+                });
+
+            hideLoading();
+    }
+
+    function publish() {
+        var formData = getFormData();
+        send(formData);
+    }
+
+    function getFormData() {
+        var formData = new FormData();
+        formData.append("SelectedDonationCategoryId", parseInt(getSelectedDonationCategoryId()));
+        //formData.append("Price", parseInt(getPrice()));
+        formData.append("Photo", document.getElementById('imageInput').files[0]);
+
+        for (let i = 0; i < cultures.length; i++) {
+            formData.append(`TitleLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`TitleLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-title`).value)
+            formData.append(`MetaTitleLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`MetaTitleLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-metaTitle`).value)
+            formData.append(`ContentLocalizations[${i}].CultureCode`, cultures[i])
+            formData.append(`ContentLocalizations[${i}].Value`, document.getElementById(`${cultures[i]}-content`).value)
+        }
+
+        return formData;
+    }
+
+    function send(formData) {
+        showLoading();
+
+        fetch('/api/donations', {
+            method: 'POST',
+            headers: {
+                'Accept-Encoding': 'multipart/form-data'
+            },
+            body: formData
+        })
+            .then(resp => {
+                hideLoading();
+                if (resp.status == 201 || resp.status == 500) {
+                    alert('Succesfully added!');
+                    window.location.href = window.location.origin + '/Donation/AdminIndex';
+                }
+                return resp.json();
+            })
+            .then(result => {
+                console.log(result);
+                if (result.status) {
+                    if (result.status == 400) {
+                        handleErrors(result.errors);
+                    }
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    function handleErrors(errors) {
+        if (errors.Photo) {
+            alert("Photo is required")
+        }
+        /*else if (errors.Price) {
+            alert('Price is required');
+        }*/
+        else if (errors.SelectedDonationCategoryId) {
+            alert('Donation category is required')
+        }
+        else {
+            alert('Unable to save. Something went wrong :(');
+        }
+    }
+
+    function showLoading() {
+        loader.style.display = 'block';
+        form.style.display = 'none';
+    }
+
+    function hideLoading() {
+        loader.style.display = 'none';
+        form.style.display = 'block';
+    }
+
+    /*function togglePrice() {
+        if (document.getElementById('constantPriceCheckBox').checked) {
+            priceContainer.style.visibility = 'visible';
+        }
+        else {
+            priceContainer.style.visibility = 'hidden';
+            priceContainer.getElementsByTagName('input')[0].value = 0;
+        }
+    }*/
+
+    function getSelectedDonationCategoryId() {
+        let options = document.getElementById('donationCategoriesSelectList').getElementsByTagName('option');
+        for (let option of options) {
+            if (option.selected) {
+                return option.value;
+            }
+        }
+    }
+
+    /*function getPrice() {
+        if (document.getElementById('constantPriceCheckBox').checked) {
+            return priceContainer.getElementsByTagName('input')[0].value;
+        }
+        else {
+            return 0;
+        }
+    }*/
+</script>

@@ -1,0 +1,80 @@
+﻿<h1>You are in to help page</h1>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Attend
+</button>
+
+<div>
+    About us
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="helpForm">
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input name="Email" type="email" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>CV *</label>
+                        <input class="form-control-file" type="file"
+                               name="Cv"
+                               required
+                               accept=".doc,.docx,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    </div>
+                    <div class="form-group">
+                        <label>Other documents</label>
+                        <input class="form-control-file" type="file"
+                               name="Documents"
+                               multiple
+                               accept=".doc,.docx,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    </div>
+                    <div class="form-group">
+                        <label>Additional information</label>
+                        <textarea class="form-control" name="Message"></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                    <input type="submit" id="sendBtn" class="btn btn-success" onclick="send()" value="Send" />
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let sendbtn = document.getElementById('sendBtn');
+
+    function send() {
+        let emailBox = document.getElementsByName('Email')[0];
+        let cvBox = document.getElementsByName('Cv')[0];
+
+        if (emailBox.value && cvBox.value) {
+            sendbtn.disabled = true;
+            sendbtn.value = 'Sending...';
+
+            fetch('/api/helps/Help', {
+                method: 'POST',
+                headers: {
+                    'Accept-Encoding': 'multipart/form-data',
+                },
+                body: new FormData(document.getElementById('helpForm'))
+            })
+                .then(resp => {
+                    window.location.href = window.location.origin + "/Help/Success";
+                })
+        }
+    }
+</script>

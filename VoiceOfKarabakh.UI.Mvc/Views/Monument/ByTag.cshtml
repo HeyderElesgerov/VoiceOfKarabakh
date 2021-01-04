@@ -1,0 +1,160 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer;
+
+@{
+    ViewData["Title"] = localizer["Monuments"].Value;
+    string cultureCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<link rel="stylesheet" href="/news/css/letter.css">
+<link rel="stylesheet" href="/news/css/newsStyle.css">
+
+<style>
+
+
+    /*pagiantion*/
+
+    #container {
+        padding-top: 20px;
+    }
+
+    #paginationContainer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .blocks {
+        width: 40px;
+        line-height: 40px;
+        text-align: center;
+        border: 1px solid #DDDDDD;
+        display: inline-block;
+        text-decoration: none;
+        color: black;
+    }
+
+        .blocks:not(:first-child) {
+            margin-left: 5px;
+        }
+
+        .blocks:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .blocks:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .blocks:hover {
+            background-color: #DDDDDD;
+        }
+
+    #paginationContainer a.active {
+        background-color: #4CAF50;
+    }
+</style>
+
+<input id="postsPagination" data-page="@ViewData["Page"].ToString()" data-perPage="@ViewData["PerPage"]" hidden />
+<input id="cultureCode" value="@cultureCode" hidden />
+<input id="tagId" value="@ViewData["TagId"]" hidden/>
+
+<section class="news-header" style="background-image: url('/news/img/t.png');">
+    <div class="news-header-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="news-header-box">
+                        <h2>@ViewData["Tag"]</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="i-news-body">
+    <div class="container">
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="row" id="newsPostsContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="container">
+    <div id="paginationContainer">
+    </div>
+</div>
+
+<script>
+    let currentPage = document.getElementById('postsPagination').dataset.page;
+    let perPage = document.getElementById('postsPagination').dataset.perpage;
+    let cultureCode = document.getElementById('cultureCode').value;
+    let postsContainer = document.getElementById('newsPostsContainer');
+    let paginationContainer = document.getElementById('paginationContainer')
+    let tagId = document.getElementById('tagId').value;
+
+    initPostsUI();
+
+    function getPosts(page, perPage, cultureCode) {
+        return fetch(`/api/Monumentposts/GetByTag/${perPage}/${page}/${tagId}/${cultureCode}`)
+            .then(resp => resp.json())
+            .then(posts => posts);
+    }
+
+    async function initPostsUI() {
+        postsContainer.innerHTML = '';
+
+        let postsVM = await getPosts(currentPage, perPage, cultureCode);
+
+        let posts = postsVM.elements;
+
+        for (let i = 0; i < posts.length; i++) {
+            let post = posts[i];
+
+            let postUi = `
+                <div class="col-lg-4 col-md-6 my-mb-4">
+                            <div class="i-news-box " style="background-image: url('/Photos/${post.photoFileName}');">
+                                <div class="i-news">
+                                    <div class="i-news-text">
+                                        <a href="/Monument/Read?id=${post.id}">
+                                            <h4>
+                                                ${post.title}
+                                            </h4>
+                                        </a>
+                                        <span>${post.metaTitle}</span>
+                                    </div>
+                                </div>
+                            </div>
+                </div>`;
+            postsContainer.innerHTML += postUi;
+        }
+
+        initPaginationUI(postsVM.previousPageExists, postsVM.nextPageExists, postsVM.maxPage);
+    }
+
+    function initPaginationUI(previousExists, nextExists, maxPage) {
+        let paginationUI = '';
+
+        if (previousExists) {
+            paginationUI += `<a href="/Monument/ByTag?tagId=${tagId}&page=${currentPage - 1}&perPage=${perPage}" class="blocks">&laquo;</a>`;
+        }
+
+        for (let i = 1; i <= maxPage; i++) {
+            if (i == currentPage) {
+                paginationUI += `<a href="/Monument/ByTag?tagId=${tagId}&page=${i}&perPage=${perPage}" class="blocks active">${i}</a>`;
+            }
+            else {
+                paginationUI += `<a href="/Monument/ByTag?tagId=${tagId}&page=${i}&perPage=${perPage}" class="blocks">${i}</a>`;
+            }
+        }
+
+        if (nextExists) {
+            let nextPage = parseInt(currentPage) + 1;
+            paginationUI += `<a href="/Monument/ByTag?tagId=${tagId}&page=${nextPage}&perPage=${perPage}" class="blocks">&raquo;</a>`;
+        }
+
+        paginationContainer.innerHTML = paginationUI;
+    }
+</script>

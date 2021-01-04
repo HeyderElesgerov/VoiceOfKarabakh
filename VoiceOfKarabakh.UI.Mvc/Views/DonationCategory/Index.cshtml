@@ -1,0 +1,268 @@
+﻿@model IEnumerable<System.Globalization.CultureInfo>;
+
+@{
+    ViewData["Title"] = "Donation Categories";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="categories">
+    <div class="row">
+        <div class="col-md-3">
+            <h4>ADD DONATION CATEGORY</h4>
+            <form id="addUser" action="">
+                @foreach (var culture in Model)
+                {
+                    <div class="form-group">
+                        <input class="culture" value="@culture.TwoLetterISOLanguageName" hidden />
+                        <input class="form-control" type="text" name="@culture.TwoLetterISOLanguageName" placeholder="@culture.DisplayName">
+                    </div>
+                }
+                <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+            </form>
+        </div>
+        <div class="col-md-9">
+            <h4>DONATION CATEGORIES</h4>
+            <div class="loader" id="loader"></div>
+            <table id="userTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Donation category</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Update Category</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    var categories = [];
+    var cultures = [];
+
+    for (let cultureInput of document.getElementsByClassName('culture')) {
+        cultures.push(cultureInput.value);
+    }
+    initItems();
+
+    $("form").submit(function (e) {
+        e.preventDefault();
+    });
+
+    $("form#addUser").submit(function () {
+        var newDonationCategory = {
+            "titleTranslations": []
+        };
+
+        for (let culture of cultures) {
+            let translation = $(`input[name="${culture}"]`).val().trim();
+
+            newDonationCategory.titleTranslations.push({
+                "cultureCode": culture,
+                "value": translation
+            });
+        }
+
+        fetch('/api/donationcategories', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(newDonationCategory)
+        })
+            .then(response => response)
+            .then(data => {
+                alert('Added');
+                initItems();
+            })
+            .catch(err => console.log(err));
+    });
+
+    function editUser(id) {
+        fetch('/api/donationcategories/GetEditDonationCategoryViewModel/' + id, {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(donationCategory => {
+                let form = `<form id="updateUser">`;
+
+                for (let culture of cultures) {
+                    let value = "";
+
+                    for (let i = 0; i < donationCategory.titleTranslations.length; i++) {
+                        let translation = donationCategory.titleTranslations[i];
+
+                        if (translation.cultureCode == culture) {
+                            value = translation.value;
+                            break;
+                        }
+                    }
+                    form += `
+                        <label>${culture}</label>
+                        <input class="form-control" type="text" name="${culture}" value="${value}"/>
+                    `;
+                }
+
+                $(".modal-body").empty().append(form);
+                $(".modal-footer").empty().append(`
+                    <button type="button" type="submit" class="btn btn-primary" onClick="updateUser(${id})">Save changes</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </form>`);
+            })
+    }
+
+    function deleteUser(id) {
+        var action = confirm("Are you sure you want to delete this donation category and all of its events??");
+        var msg = "Category deleted successfully!";
+        for (let i = 0; i < categories.length; i++) {
+            let category = categories[i];
+            if (category.id == id && action != false) {
+                fetch('/api/donationcategories/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(id)
+                })
+                    .then(response => response)
+                    .then(data => {
+                        categories.splice(i, 1);
+                        $("#userTable #user-" + id).remove();
+                    })
+                    .catch(err => console.log(err));
+
+                break;
+            }
+        }
+    }
+
+    function updateUser(id) {
+        var msg = "User updated successfully!";
+
+        fetch('/api/donationcategories/GetEditDonationCategoryViewModel/' + id, {
+            method: 'GET'
+        })
+            .then(resp => resp.json())
+            .then(donationCategory => {
+                $("#updateUser").children("input").each(function () {
+                    var value = $(this).val();
+                    var attr = $(this).attr("name");
+
+                    let translationExists = false;
+
+                    for (let i = 0; i < donationCategory.titleTranslations.length; i++) {
+                        let translation = donationCategory.titleTranslations[i];
+                        if (translation.cultureCode == attr) {
+                            translation.value = value;
+                            translationExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!translationExists) {
+                        donationCategory.titleTranslations.push({
+                            'localizationSetId': donationCategory.titleTranslations[0].localizationSetId,
+                            'cultureCode': attr,
+                            'value': value
+                        });
+                    }
+                });
+
+                fetch('/api/donationcategories', {
+                    method: 'PUT',
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(donationCategory)
+                })
+                    .then(resp => {
+                        initItems();
+                        $(".modal").modal("toggle");
+                    })
+            })
+    }
+
+    function flashMessage(msg) {
+        $(".flashMsg").remove();
+        $(".row").prepend(`
+        <div class="col-sm-12"><div class="flashMsg alert alert-success alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button> <strong>${msg}</strong></div></div>
+    `);
+    }
+
+    function appendToUsrTable(category) {
+        var newRow = `
+        <tr id="user-${category.id}">
+            <td class="userData" >${category.title}</td>
+            <td align="center">
+                <button class="btn btn-warning" onClick="editUser(${category.id})" data-toggle="modal" data-target="#myModal") ">EDIT</button>
+            </td >
+            <td align="center">
+                <button class="btn btn-danger" onClick="deleteUser(${category.id})">DELETE</button>
+            </td>
+        </tr >`;
+
+        $("#userTable > tbody").prepend(newRow);
+    }
+
+    function initItems() {
+        document.getElementById('userTable').style.opacity = '0%';
+
+        categories = [];
+        $("#userTableBody").empty();
+
+        fetch('/api/donationcategories/az')
+            .then(response => response.json())
+            .then(data => {
+                for (let category of data) {
+                    categories.push(category)
+                    appendToUsrTable(category);
+                }
+
+                if (document.getElementById('loader')) {
+                    document.getElementById('loader').remove();
+                }
+
+                document.getElementById('userTable').style.opacity = '100%';
+            });
+    }
+</script>

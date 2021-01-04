@@ -1,0 +1,111 @@
+﻿@model VoiceOfKarabakh.Application.ViewModels.Email.ContactViewModel;
+
+@{ 
+    ViewData["Title"] = "Contact";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+<link rel="stylesheet" type="text/css" href="/Contact/Contact.css">
+
+<!-- <START-CONTACT> -->
+<div class="co-contact">
+    <div class="co-head">
+        <h1>Əlaqə</h1>
+    </div>
+    <div class="contact-left">
+        <div class="co-stil">
+            <div class="address">
+                <i class="fas fa-paper-plane"></i>
+                <h3>Email</h3>
+                <a href="#">info@vok.az</a>
+                <br>
+            </div>
+            <div class="address">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Address</h3>
+                <b>Azerbaijan, Baku, Khatai District</b>
+            </div>
+            <div class="address">
+                <i class="fas fa-phone"></i>
+                <h3>Phone</h3>
+                <a href="#">+994774775252</a>
+            </div>
+        </div>
+    </div>
+    <div class="contact-rigth">
+        <form id="contactForm">
+            <div class="form-group">
+                <label>Ad və soyadınız</label>
+                <input name="FullName" type="text" class="form-control" required>
+            </div>
+            <div class="co-name">
+                <label>Mail adresiniz</label>
+                <input name="Email" type="text" class="form-control" required>
+            </div>
+            <div class="co-name">
+                <label>Mövzu</label>
+                <input name="Topic" type="text" class="form-control" required>
+            </div>
+            <div class="co-name">
+                <label>Mesajınız</label>
+                <textarea name="Message" class="form-control" required></textarea>
+            </div>
+            <div>
+                <p class="text-success" id="sentInfo" style="display: none">Your message has been sent!</p>
+                <p class="text-danger" id="notSentInfo" style="display: none">Your message not sent!</p>
+            </div>
+            <div class="form-group" style="text-align: center;">
+                <button class="co-button" value="Send" id="contactSubmit" >Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- <END-CONTACT> -->
+
+<script>
+    var submitBtn = document.getElementById('contactSubmit');
+    submitBtn.onclick = function () {
+        var message = {
+            fullName: document.getElementsByName('FullName')[0].value,
+            from: document.getElementsByName('Email')[0].value,
+            topic: document.getElementsByName('Topic')[0].value,
+            message: document.getElementsByName('Message')[0].value,
+        };
+
+        if (message.fullName && message.from && message.topic && message.message) {
+            if (validateEmail(message.from)) {
+                submitBtn.innerText = 'SENDING...'
+                submitBtn.disabled = true;
+
+                fetch('/api/contacts/Send', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(message)
+                })
+                    .then(response => {
+                        if (response.status == 200) {
+                            document.getElementById('contactForm').reset();
+                            document.getElementById('sentInfo').style.display = 'inline';
+                        }
+                        else {
+                            document.getElementById('notSentInfo').style.display = 'inline';
+                        }
+
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'SEND'
+                    })
+            }
+            else {
+                alert('Email is not an email');
+            }
+        }
+    }
+
+    function validateEmail(email) {
+        const re = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+</script>

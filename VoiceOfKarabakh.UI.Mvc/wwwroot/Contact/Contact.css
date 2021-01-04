@@ -1,0 +1,154 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.contact{
+}
+.contact-form {
+    width: 92%;
+    margin-top:0px;
+    height: 20px;
+    padding: 10px;
+    font-size: 25px;    
+}
+.co-phon{
+    min-width: 92%;
+    font-size:18px;
+    padding: 10px;
+    margin-top: 20px;
+    height: 30px;
+}
+.contact-form:hover {
+    cursor:default;
+    color: green;
+    border: 1px solid;
+    box-shadow: 5px 10px 20px silver inset;
+}
+.co-textarea{
+    min-height:100px;
+    display: block;
+    width: 92.5%;
+}
+.contact-rigth{
+    width:38%;
+    margin-bottom: 0px;
+    margin-left:45%;
+}
+.contact-left{
+    width:32%;
+    margin-left:6%;
+    margin-bottom:10px;
+    margin-right:0%;
+    float: left;
+    /*background-image: url("./assets/img/photo6.jfif")!important;*/
+    background-size: 100% 100%;
+}
+.co-button {
+    width: 50%;
+    margin-top:10px;
+    margin-bottom: 10px;
+    margin-left:0%;
+    height: 40px;
+    font-size: 20px;    
+    color:white;
+    cursor: pointer;
+    border-radius: 5px;
+    background: #1B2631;
+    height:50px;
+}
+.co-button:hover{
+    background: white;
+    color: green;
+}
+.co-stil{
+    width: 80%;
+    min-height: 20px;
+}
+.address i{
+    color: red;
+    font-size:30px;
+}
+.co-stil a{
+    color: black;
+    font-size: 15px;
+}
+.co-stil h3{
+    font-size: 18px;
+    margin: 10px 0px 5px 0px;
+}
+.co-stil b{
+    font-size: 15px;
+    margin-top: 10px;
+}
+.address{
+    color: black;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+.co-name{
+    margin-top: 30px;
+    color: black;
+}
+.co-contact{ 
+    color:black;
+    min-height: 700px;
+    width: 60%;
+    border: 0.1px;
+    border-style: groove;
+    margin-left: 20%;
+    font-family: sans-serif;
+}
+.co-head{
+    width: 88%;
+    color: #999999;
+    margin-left: 6%;
+    line-height: 60px;
+}
+.co-head a{
+    color:#999999;
+    text-decoration: none;
+}
+.co-head h1{
+    font-size: 41px;
+    font-weight: 700;
+    color: black;
+}
+@media (max-width:700px) {
+            .contact-rigth {
+                width:80% !important;;
+                margin-left: 10% !important;
+            }
+            .co-contact h1{
+                font-size: 28px;
+            }
+            .co-head{
+                width: 40% !important;
+                margin-left:10% !important;
+            }
+            .co-contact{
+                width: 100% !important;
+                margin-left: 0px !important;
+            }
+            form input{
+                text-align: center !important; 
+            }
+            .co-textarea{
+                text-align: center !important; 
+
+            }
+            .contact-left{
+                width: 80% !important;;
+                margin-left: 10% !important;;
+            }
+            .form-control{
+                width: 80% !important;;
+                margin-left: 10% !important;;
+                font-size:18px !important;
+            }
+            .co-phon{
+                width: 80% !important;;
+            }
+            .contact-form{
+                font-size:20px !important;
+            }
+}
