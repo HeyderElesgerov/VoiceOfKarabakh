@@ -1,1 +1,114 @@
 ﻿<h1>You are in to get help page</h1>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Attend
+</button>
+
+<div>
+    About us
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" id="getHelpForm">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input name="FullName" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select required name="Status" class="form-control">
+                            <option value="" disabled selected>Status seçin</option>
+                            <option value="Şəhid övladı">Şəhid övladı</option>
+                            <option value="Şəhid xanımı">Şəhid xanımı</option>
+                            <option value="Qazi">Qazi</option>
+                            <option value="Qazi övladı">Qazi övladı</option>
+                            <option value="Qazi xanımı">Qazi xanımı</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Course *</label>
+                        <select required name="Course" class="form-control">
+                            <option value="" disabled selected>Kurs seçin</option>
+                            <option value="Ingilis dili">Ingilis Dili hazırlığı</option>
+                            <option value="Rus dili">Rus Dili hazırlığı</option>
+                            <option value="Qəbul imtahanına hazırlıq">Qəbul imtahanı hazırlığı</option>
+                            <option value="Qrafik Dizayn">Qrafik dizayn öyrənmək</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input name="PhoneNumber" type="number" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input name="Email" type="email" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Birth Date *</label>
+                        <input name="BirthDate" type="date" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Address *</label>
+                        <input name="Address" class="form-control" required />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Documents *</label>
+                        <input class="form-control-file" type="file"
+                               name="Documents"
+                               multiple required
+                               accept=".doc,.docx,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea class="form-control" name="Note"></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                    <input type="submit" id="sendBtn" class="btn btn-success" onclick="send()" value="Send" />
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let sendbtn = document.getElementById('sendBtn');
+    let form = document.getElementById("getHelpForm");
+
+    function send() {
+        if (form.checkValidity()) {
+            sendbtn.disabled = true;
+            sendbtn.value = 'Sending...';
+
+            fetch('/api/Helps/GetHelp', {
+                method: 'POST',
+                headers: {
+                    'Accept-Encoding': 'multipart/form-data',
+                },
+                body: new FormData(form)
+            })
+                .then(resp => {
+                    window.location.href = window.location.origin + "/Help/Success";
+                })
+        }
+    }
+</script>
