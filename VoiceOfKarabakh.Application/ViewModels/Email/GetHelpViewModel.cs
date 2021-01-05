@@ -16,6 +16,9 @@ namespace VoiceOfKarabakh.Application.ViewModels.Email
         [Required, DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
 
+        [Required, DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+
         [Required, DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
 
