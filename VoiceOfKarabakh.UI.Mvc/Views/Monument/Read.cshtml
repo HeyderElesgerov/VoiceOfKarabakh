@@ -5,61 +5,150 @@
     string cultureCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 }
 
+<style>
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: relative;
+        margin: 0 auto;
+    }
 
-<link rel="stylesheet" href="/Singlepost/styles/spost.css">
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
 
-<input id="serverData" data-id="@ViewData["id"]" data-culture="@cultureCode" hidden/>
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 
-<section class="post-main">
-    <div class="thumb"></div>
-    <div class="meta">
-        <div class="tags">
+<input id="serverData" data-id="@ViewData["id"]" data-culture="@cultureCode" hidden />
+
+<!-- Page Content -->
+<div class="container">
+
+    <div class="row">
+
+        <!-- Post Content Column -->
+        <div class="col-lg-8">
+            <div class="loader" id="loader" style="display: block;"></div>
+
+            <!-- Title -->
+            <h1 class="mt-4" id="title"></h1>
+            <!-- Date/Time -->
+            <p id="date"></p>
+            <!-- Preview Image -->
+            <img class="img-fluid rounded" id="headerPhoto" style="width: 900px; height:300px;">
+            <hr>
+            <!-- Post Content -->
+            <p id="content"></p>
+            <hr>
         </div>
 
-        <p class="date"></p>
+        <!-- Sidebar Widgets Column -->
+        <div class="col-md-4">
+            <!-- Categories Widget -->
+            <div class="card my-4">
+                <h5 class="card-header">@localizer["Categories"]</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <ul class="list-unstyled mb-0" id="categories">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Tags Widget -->
+            <div class="card my-4">
+                <h5 class="card-header">@localizer["Tags"]</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <ul class="list-unstyled mb-0" id="tags">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Widget -->
+            <div class="card my-4">
+                <h5 class="card-header">@localizer["Related Posts"]</h5>
+                <div class="card-body" id="relatedPosts">
+                </div>
+            </div>
+
+        </div>
+
     </div>
-    <h2></h2>
-    <div class="content">
-    </div>
-</section>
+    <!-- /.row -->
+
+</div>
+<!-- /.container -->
 
 <script>
-    let thumb = document.querySelector('.thumb');
-    let tagsContainer = document.querySelector('.tags');
-    let date = document.querySelector('.date');
-    let title = document.querySelector('h2');
-    let content = document.querySelector('.content');
+    let thumb = document.getElementById('headerPhoto');
+
+    let tagsContainer = document.getElementById('tags');
+    let categoriesContainer = document.getElementById('categories');
+
+    let relatedPostsContainer = document.getElementById('relatedPosts');
+
+    let date = document.getElementById('date');
+    let title = document.getElementById('title');
+    let content = document.getElementById('content');
+
     let posId = document.getElementById('serverData').dataset.id;
     let culture = document.getElementById('serverData').dataset.culture;
 
-    fetch(`/api/Monumentposts/GetReadPost/${posId}/` + culture)
+    fetch(`/api/monumentposts/GetReadPost/${posId}/` + culture)
         .then(response => response.json())
         .then(data => {
-            thumb.style.backgroundImage = `url("/Photos/${data.photoFilePath}")`;
+            thumb.src = `/Photos/${data.photoFilePath}`;
             title.innerText = `${data.title}`;
             content.innerHTML = data.content;
 
             for (let i = 0; i < data.categories.length; i++) {
                 var category = data.categories[i];
-                var categoryEl = createCategory(category.categoryId, category.categoryTitle);
-                if (categoryEl) {
-
-                    tagsContainer.appendChild(categoryEl);
-                }
+                categoriesContainer.innerHTML += `
+                                <li>
+                                    <a href="/Monument/ByCategory?categoryId=${category.categoryId}" >${category.categoryTitle}</a>
+                                </li>`
             }
 
             for (let i = 0; i < data.tags.length; i++) {
                 let tag = data.tags[i];
-                var tagEl = createTag(tag.tagId, tag.tagTitle);
 
-                if (tagEl) {
-                    tagsContainer.appendChild(tagEl);
-                }
+                tagsContainer.innerHTML += `
+                                <li>
+                                    <a href="/Monument/ByTag?tagId=${tag.tagId}" >${tag.tagTitle}</a>
+                                </li>`
             }
 
             date.innerText = `${convertDateFormat(data.created)}` || "";
+
+            hideLoading();
         });
 
+    fetch(`/api/monumentposts/GetRelatedPosts/${posId}/${culture}`)
+        .then(resp => resp.json())
+        .then(relatedPosts => {
+            for (let i = 0; i < relatedPosts.length; i++) {
+                let relatedPost = relatedPosts[i];
+
+                relatedPostsContainer.innerHTML += `
+                    <div>
+                        <a href="/Monument/Read?id=${relatedPost.id}">${relatedPost.title}</a>
+                    </div>`;
+            }
+        })
 
     function convertDateFormat(date) {
         let month = date.slice(5, 7);
@@ -106,29 +195,7 @@
         return monthName + ' ' + day;
     }
 
-    function createTag(tagId, tagName) {
-        if (tagName) {
-            var a = document.createElement('a');
-            a.innerText = '#' + tagName + '   ';
-            a.href = '/Monument/ByTag?tagId=' + tagId;
-
-            a.classList.add('tagname');
-
-            return a;
-        }
-
-    }
-
-    function createCategory(categoryId, categoryName) {
-        if (categoryName) {
-            var a = document.createElement('a');
-            a.innerText = categoryName + '  ';
-            a.href = '/Monument/ByCategory?categoryId=' + categoryId;
-
-            a.classList.add('tagname');
-
-            return a;
-        }
-
+    function hideLoading() {
+        document.getElementById('loader').style.display = 'none';
     }
 </script>

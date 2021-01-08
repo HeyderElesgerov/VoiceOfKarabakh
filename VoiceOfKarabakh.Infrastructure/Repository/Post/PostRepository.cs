@@ -96,6 +96,15 @@ namespace VoiceOfKarabakh.Infrastructure.Repository.Post
             existingPost.Drafted = editedPost.Drafted;
         }
 
+        public void IncreaseReadingTime(int id)
+        {
+            if (!Exists(id))
+                throw new ArgumentNullException();
+
+            TPost post = GetPost(id);
+            post.ReadingCount += 1;
+        }
+
         public bool PostCategoryExists(int postId, int categoryId)
         {
             var post = GetPost(postId, "Categories");

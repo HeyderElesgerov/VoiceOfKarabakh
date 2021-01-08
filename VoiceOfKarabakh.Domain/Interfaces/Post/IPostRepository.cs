@@ -16,6 +16,8 @@ namespace VoiceOfKarabakh.Domain.Interfaces.Post
 
         void Update(int id, TPost editedPost);
 
+        void IncreaseReadingTime(int id);
+
         void Delete(int id);
 
         bool Exists(int id);

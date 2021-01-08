@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using VoiceOfKarabakh.Application.Interfaces;
 using VoiceOfKarabakh.Application.Interfaces.Localization;
 using VoiceOfKarabakh.Application.Interfaces.LocalizationSet;
@@ -86,13 +87,6 @@ namespace VoiceOfKarabakh.UI.Mvc.Controllers.API
 
             return Ok(editPostVM);
         }
-
-        //[HttpGet("[action]/{id}")]
-        //[AllowAnonymous]
-        //public IActionResult GetReadPostViewModel(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         [HttpPost]
         public IActionResult Add([FromForm] NewPostDto newPostDto)
@@ -338,7 +332,8 @@ namespace VoiceOfKarabakh.UI.Mvc.Controllers.API
         [AllowAnonymous]
         public IActionResult GetPopularPosts(int count, string cultureCode, int page)
         {
-            return Ok(_postService.GetPopularPosts(cultureCode, count, page, "TitleLocalizationSet.Localizations,HeaderPhoto"));
+            var popularPosts = _postService.GetPopularPosts(cultureCode, count, page, "TitleLocalizationSet.Localizations,HeaderPhoto");
+            return Ok(popularPosts);
         }
 
         [HttpGet, Route("[action]/{count}/{culturecode}/{page}")]
@@ -354,7 +349,21 @@ namespace VoiceOfKarabakh.UI.Mvc.Controllers.API
         [AllowAnonymous]
         public IActionResult GetReadPost(int id, string cultureCode)
         {
-            return Ok(_postService.GetReadPostViewModel(id, cultureCode, "TitleLocalizationSet.Localizations,ContentLocalizationSet.Localizations,HeaderPhoto,Categories.TitleLocalizationSet.Localizations,Tags.TitleLocalizationSet.Localizations"));
+            var post = _postRepository.GetPost(id);
+
+            if(post == null)
+                return NotFound();
+
+            var readPostVM = _postService.GetReadPostViewModel(id, cultureCode, "TitleLocalizationSet.Localizations,ContentLocalizationSet.Localizations,HeaderPhoto,Categories.TitleLocalizationSet.Localizations,Tags.TitleLocalizationSet.Localizations");
+
+            if(HttpContext.Request.Cookies["post"+id] == null)
+            {
+                HttpContext.Response.Cookies.Append("post" + id, "read");
+                _postRepository.IncreaseReadingTime(id);
+                _postRepository.Save();
+            }
+
+            return Ok(readPostVM);
         }
 
         [HttpGet, Route("[action]/{count}/{page}/{categoryId}/{culturecode}")]
@@ -375,6 +384,53 @@ namespace VoiceOfKarabakh.UI.Mvc.Controllers.API
 
             return Ok(_postService.GetIndexPagePostElements(page, count, cultureCode, includes,
                 p => !p.Drafted && p.Tags.Any(c => c.Id == tagId)));
+        }
+
+        [HttpGet, Route("[action]/{postId}/{cultureCode}")]
+        [AllowAnonymous]
+        public IActionResult GetRelatedPosts(int postId, string cultureCode)
+        {
+            List<PostIndexViewModel> posts = new List<PostIndexViewModel>();//related posts
+
+            var post = _postRepository.GetPost(postId, "Categories,Tags");
+
+            if (post != null)
+            {
+                foreach (var category in post.Categories)
+                {
+                    var relatedPosts = _postService.GetPostIndexViewModels(cultureCode, "TitleLocalizationSet.Localizations,Categories", p =>
+                                !p.Drafted && p.Id != postId && p.Categories.Contains(category));
+
+                    foreach (var relatedPost in relatedPosts)
+                    {
+                        bool alredySelected = posts.FirstOrDefault(p => p.Id == relatedPost.Id) != null;
+
+                        if (!alredySelected)
+                        {
+                            posts.Add(relatedPost);
+                        }
+                    }
+                }
+
+                foreach (var tag in post.Tags)
+                {
+                    var relatedPosts = _postService.GetPostIndexViewModels(cultureCode,
+                        "TitleLocalizationSet.Localizations,Tags", p =>
+                                !p.Drafted && p.Id != postId && p.Tags.Contains(tag));
+
+                    foreach (var relatedPost in relatedPosts)
+                    {
+                        bool alredySelected = posts.FirstOrDefault(p => p.Id == relatedPost.Id) != null;
+
+                        if (!alredySelected)
+                        {
+                            posts.Add(relatedPost);
+                        }
+                    }
+                }
+            }
+
+            return Ok(posts);
         }
     }
 }

@@ -258,6 +258,55 @@ namespace VoiceOfKarabakh.Application.Services.Post
             return postViewModels;
         }
 
+        public IEnumerable<PostIndexViewModel> GetPostIndexViewModels(string cultureCode, string includes = null, Expression<Func<TPost, bool>> filter = null)
+        {
+            List<PostIndexViewModel> postIndexViewModels = new List<PostIndexViewModel>();
+            var posts = _postRepository.GetPosts(includes, filter);
+
+            foreach(var post in posts)
+            {
+                var postindexVM = new PostIndexViewModel()
+                {
+                    Id = post.Id,
+                    Created = post.Created,
+                    ReadingTime = post.ReadingTime,
+                    ReadingCount = post.ReadingCount,
+                    Title = "",
+                    MetaTitle = "",
+                    PostType = typeof(TPost).FullName
+                };
+
+                if (post.TitleLocalizationSet != null && post.TitleLocalizationSet.Localizations != null)
+                {
+                    var titleLoc = post.TitleLocalizationSet.Localizations.FirstOrDefault(l => l.CultureCode == cultureCode);
+
+                    if (titleLoc != null)
+                    {
+                        postindexVM.Title = titleLoc.Value;
+                    }
+                }
+
+                if (post.MetaTitleLocalizationSet != null && post.MetaTitleLocalizationSet.Localizations != null)
+                {
+                    var metaTitleLoc = post.MetaTitleLocalizationSet.Localizations.FirstOrDefault(l => l.CultureCode == cultureCode);
+
+                    if (metaTitleLoc != null)
+                    {
+                        postindexVM.MetaTitle = metaTitleLoc.Value;
+                    }
+                }
+
+                if (post.HeaderPhoto != null)
+                {
+                    postindexVM.PhotoFileName = post.HeaderPhoto.FilePath.Split('/').Last();
+                }
+
+                postIndexViewModels.Add(postindexVM);
+            }
+
+            return postIndexViewModels;
+        }
+
         public ReadPostViewModel GetReadPostViewModel(int id, string cultureCode, string includes = null)
         {
             var post = _postRepository.GetPost(id, includes);

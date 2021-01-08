@@ -86,7 +86,7 @@
     //Getting the containers from DOM
     let cultureCode = document.getElementById('homePageCultureCode').value;
     let latesPostContainers = document.querySelector('.latest-content').querySelectorAll('.post');
-    let page;
+    let page = 1;
     let nextPageExists;
 
     function initLatestNewsUI(newsPosts) {
@@ -106,28 +106,18 @@
         }
     }
 
-    function initPopularPostsUI(posts) {
-        for (let i = 0; i < posts.length; i++) {
-            let post = posts[i];
+    function initPopularPostUI(post, postType) {
+        var postContainer = createPopularPost();
 
-            var postContainer = createPopularPost();
+        postContainer.href = `/${postType}/Read?id=` + post.id;
 
-            if (post.postType.toLowerCase() == "news") {
-                postContainer.href = "/News/Read?id=" + post.id;
-            }
-            else {
-                postContainer.href = "/History/Read?id=" + post.id;
-            }
-            
-            postContainer.querySelector('.p-thumb').style.backgroundImage = `url("/Photos/${post.photoFileName}")`;
+        postContainer.querySelector('.p-thumb').style.backgroundImage = `url("/Photos/${post.photoFileName}")`;
 
-            postContainer.querySelector('.p-post-name').innerText = `${post.title}`;
-            postContainer.querySelector('.p-date').innerText = `${convertDateFormat(post.created)}`;
-            postContainer.querySelector('.seen').querySelector('span').innerText = `${post.readingCount}`;
+        postContainer.querySelector('.p-post-name').innerText = `${post.title}`;
+        postContainer.querySelector('.p-date').innerText = `${convertDateFormat(post.created)}`;
+        postContainer.querySelector('.seen').querySelector('span').innerText = `${post.readingCount}`;
 
-            addPostItem(postContainer);
-        }
-        
+        addPostItem(postContainer);
     }
 
     //Filling lates news
@@ -135,57 +125,46 @@
         .then(response => response.json())
         .then(data => initLatestNewsUI(data));
 
-    //Filling popular news
-    fetch(`/api/historyposts/GetPopularPosts/5/${cultureCode}/1`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            let posts = data.elements;
-            nextPageExists = data.nextPageExists;
+    initPopularPosts();
 
-            if (nextPageExists === false)
-                document.getElementsByClassName('see-more')[0].remove();
+    function initPopularPosts() {
+        nextPageExists = false;
 
-            page = 1;
+        loadPopularPosts("History")
+            .then(v => loadPopularPosts("Celebrity"))
+            .then(v => loadPopularPosts("CulturalHeritage"))
+            .then(v => loadPopularPosts("Monument"))
+            .then(v => {
+                if (!nextPageExists) {
+                    document.getElementsByClassName('see-more')[0].remove();
+                }
+            })
+    }
 
-            initPopularPostsUI(posts);
-        });
-    
-    /*function more() {
+    async function loadPopularPosts(postType) {
+        postType = postType.toLowerCase();
+        await fetch(`/api/${postType}posts/GetPopularPosts/1/${cultureCode}/${page}`)
+            .then(response => response.json())
+            .then(data => {
+                let posts = data.elements;
+                console.log(posts);
+                console.log(data.nextPageExists)
+                if (data.nextPageExists === true)
+                    nextPageExists = true;
+
+                for (let post of posts) {
+                    initPopularPostUI(post, postType);
+                }
+            });
+    }
+
+    function more() {
         if (nextPageExists) {
-            fetch("/api/popularposts/5/" + (page + 1))
-                .then(response => response.json())
-                .then(data => {
-                    nextPageExists = data.nextPageExists;
-                    page += 1;
-
-                    if (data.nextPageExists === false)
-                        document.getElementsByClassName('see-more')[0].remove();
-
-                    let elements = data.elements;
-
-                    elements.forEach(el => {
-                        var post = createPopularPost();
-
-                        if (el.postType.toLowerCase() == "news") {
-                            post.querySelector('.p-thumb').style.backgroundImage = `url("/Photos/News/${el.photoPath}")`;
-                            post.href = "/News/Read?id=" + el.id;
-                        }
-                        else {
-                            post.querySelector('.p-thumb').style.backgroundImage = `url("/Photos/History/${el.photoPath}")`;
-                            post.href = "/History/Read?id=" + el.id;
-                        }
-
-                        post.querySelector('.p-post-name').innerText = `${el.title}`;
-                        post.querySelector('.p-date').innerText = `${convertDateFormat(el.createdDate)}`;
-                        post.querySelector('.seen').querySelector('span').innerText = ` ${el.readingCount}`;
-
-                        addPostItem(post);
-                    })
-                })
+            page += 1;
+            initPopularPosts();
         }
     }
-    */
+    
     function convertDateFormat(date) {
         let month = date.slice(5, 7);
         let day = date.slice(8, 10);

@@ -9,8 +9,8 @@ namespace VoiceOfKarabakh.Application.Utility
     {
         public int Compare(Post x, Post y)
         {
-            int xrating = x.ReadingTime / (DateTime.Now - x.Created).Minutes;
-            int yrating = y.ReadingTime / (DateTime.Now - y.Created).Minutes;
+            double xrating = (double)x.ReadingCount / (DateTime.Now - x.Created).TotalSeconds;
+            double yrating = (double)y.ReadingCount / (double)(DateTime.Now - y.Created).TotalSeconds;
 
             return xrating.CompareTo(yrating);
         }

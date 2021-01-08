@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Folder Include="Resources\Views\" />
     <Folder Include="wwwroot\Multiple-Image-Picker-jQuery-Spartan\dist\js\" />
     <Folder Include="wwwroot\Multiple-Image-Picker-jQuery-Spartan\src\js\" />
     <Folder Include="wwwroot\Photos\" />

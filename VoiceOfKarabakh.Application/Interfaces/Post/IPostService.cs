@@ -16,6 +16,8 @@ namespace VoiceOfKarabakh.Application.Interfaces
 
         PaginatedElements<PostIndexViewModel> GetIndexPagePostElements(int page, int perPage, string cultureCode, string includes = null, Expression<Func<TPost, bool>> predict = null);
 
+        IEnumerable<PostIndexViewModel> GetPostIndexViewModels(string cultureCode, string includes = null, Expression<Func<TPost, bool>> filter = null);
+
         IEnumerable<PostIndexViewModel> GetLatestPosts(string cultureCode, int count, string includes = null);
 
         PaginatedElements<PostIndexViewModel> GetPopularPosts(string cultureCode, int count, int page, string includes = null);
